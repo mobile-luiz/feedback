@@ -7,21 +7,32 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary: #2c3e50;
-      --primary-light: #34495e;
-      --secondary: #3498db;
-      --secondary-light: #5dade2;
-      --success: #27ae60;
-      --success-light: #2ecc71;
-      --warning: #f39c12;
-      --error: #e74c3c;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #2d3748;
-      --text-light: #718096;
-      --border: #e2e8f0;
-      --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-      --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
+      --shoppe-red: #e53935;
+      --shoppe-red-light: #ff5252;
+      --shoppe-orange: #ff6f00;
+      --shoppe-orange-light: #ff9100;
+      --shoppe-dark: #212121;
+      --shoppe-gray: #757575;
+      --shoppe-light-gray: #f5f5f5;
+      --shoppe-white: #ffffff;
+      --shoppe-green: #4caf50;
+      --shoppe-blue: #2196f3;
+      --shoppe-yellow: #ffc107;
+      --primary: var(--shoppe-dark);
+      --primary-light: #424242;
+      --secondary: var(--shoppe-red);
+      --secondary-light: var(--shoppe-red-light);
+      --success: var(--shoppe-green);
+      --success-light: #66bb6a;
+      --warning: var(--shoppe-orange);
+      --error: var(--shoppe-red);
+      --bg: linear-gradient(135deg, #fff5f5 0%, #ffebee 100%);
+      --card-bg: var(--shoppe-white);
+      --text: var(--shoppe-dark);
+      --text-light: var(--shoppe-gray);
+      --border: #e0e0e0;
+      --shadow: 0 10px 25px rgba(229, 57, 53, 0.08);
+      --shadow-hover: 0 15px 35px rgba(229, 57, 53, 0.15);
       --radius: 16px;
       --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
@@ -30,11 +41,11 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
     body {
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      background: var(--bg);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -67,7 +78,7 @@
       left: 0;
       width: 100%;
       height: 6px;
-      background: linear-gradient(90deg, var(--secondary), var(--success));
+      background: linear-gradient(90deg, var(--shoppe-red), var(--shoppe-orange));
     }
     
     .login-container:hover {
@@ -84,7 +95,7 @@
     }
     
     .logo-icon {
-      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      background: linear-gradient(135deg, var(--shoppe-red), var(--shoppe-orange));
       width: 70px;
       height: 70px;
       border-radius: 50%;
@@ -93,11 +104,11 @@
       justify-content: center;
       color: white;
       font-size: 32px;
-      box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+      box-shadow: 0 8px 20px rgba(229, 57, 53, 0.3);
     }
     
     .login-container h2 {
-      color: var(--primary);
+      color: var(--shoppe-red);
       margin-bottom: 10px;
       font-weight: 700;
       font-size: 28px;
@@ -138,21 +149,21 @@
       border-radius: 12px;
       font-size: 16px;
       transition: var(--transition);
-      background-color: #fcfdfe;
+      background-color: var(--shoppe-light-gray);
       color: var(--text);
     }
     
     .login-container input:focus {
       outline: none;
-      border-color: var(--secondary);
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      border-color: var(--shoppe-red);
+      box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
       background-color: white;
     }
     
     .login-container button {
       width: 100%;
       padding: 18px;
-      background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+      background: linear-gradient(135deg, var(--shoppe-red), var(--shoppe-orange));
       color: white;
       border: none;
       border-radius: 12px;
@@ -169,8 +180,8 @@
     }
     
     .login-container button:hover {
-      background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
-      box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+      background: linear-gradient(135deg, var(--shoppe-orange), var(--shoppe-red));
+      box-shadow: 0 10px 20px rgba(229, 57, 53, 0.3);
       transform: translateY(-2px);
     }
     
@@ -179,14 +190,14 @@
     }
     
     .login-error {
-      color: var(--error);
+      color: var(--shoppe-red);
       margin-top: 15px;
       font-size: 14px;
       display: none;
       padding: 12px;
-      background-color: rgba(231, 76, 60, 0.08);
+      background-color: rgba(229, 57, 53, 0.08);
       border-radius: 8px;
-      border-left: 4px solid var(--error);
+      border-left: 4px solid var(--shoppe-red);
     }
     
     /* Tela Principal (feedback) */
@@ -197,14 +208,14 @@
     }
     
     .header {
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      background: linear-gradient(135deg, var(--shoppe-red), var(--shoppe-orange));
       padding: 25px 30px;
       border-radius: var(--radius) var(--radius) 0 0;
       color: white;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 5px 15px rgba(44, 62, 80, 0.2);
+      box-shadow: 0 5px 15px rgba(229, 57, 53, 0.2);
     }
     
     .header-info h2 {
@@ -257,7 +268,7 @@
     
     .form-section h3 {
       font-size: 18px;
-      color: var(--primary);
+      color: var(--shoppe-red);
       margin-bottom: 20px;
       padding-bottom: 10px;
       border-bottom: 2px solid var(--border);
@@ -268,7 +279,7 @@
     }
     
     .form-section h3 i {
-      color: var(--secondary);
+      color: var(--shoppe-red);
     }
     
     label {
@@ -286,20 +297,20 @@
       border-radius: 12px;
       font-size: 16px;
       transition: var(--transition);
-      background-color: #fcfdfe;
+      background-color: var(--shoppe-light-gray);
       color: var(--text);
     }
     
     input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: var(--secondary);
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      border-color: var(--shoppe-red);
+      box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
       background-color: white;
     }
     
     select {
       appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23757575' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
       background-repeat: no-repeat;
       background-position: right 20px center;
       background-size: 18px;
@@ -312,18 +323,97 @@
       line-height: 1.5;
     }
     
+    /* Estilos para o campo de nota com cores Shoppe */
+    .nota-container {
+      background: linear-gradient(135deg, #fff8f8 0%, #fff0f0 100%);
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid #ffe0e0;
+      margin-bottom: 25px;
+    }
+    
+    .nota-display {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+    
+    .nota-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 10px;
+      border-radius: 5px;
+      background: linear-gradient(to right, var(--shoppe-red), var(--shoppe-orange), var(--shoppe-green));
+      outline: none;
+    }
+    
+    .nota-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      border: 3px solid var(--shoppe-red);
+      box-shadow: 0 4px 10px rgba(229, 57, 53, 0.2);
+      transition: var(--transition);
+    }
+    
+    .nota-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+      border-color: var(--shoppe-orange);
+    }
+    
+    .nota-value {
+      background: linear-gradient(135deg, var(--shoppe-red), var(--shoppe-orange));
+      color: white;
+      min-width: 70px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 20px;
+      text-align: center;
+      transition: var(--transition);
+      box-shadow: 0 4px 10px rgba(229, 57, 53, 0.2);
+    }
+    
+    .nota-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    
+    .nota-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--primary);
+    }
+    
+    .nota-indicator-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--shoppe-red);
+    }
+    
     .signature-container {
       margin: 25px 0;
       padding: 25px;
-      background-color: #f8fafc;
+      background: linear-gradient(135deg, #fff8f8 0%, #fff0f0 100%);
       border-radius: 12px;
-      border: 2px dashed var(--border);
+      border: 2px dashed #ffcdd2;
       transition: var(--transition);
     }
     
     .signature-container:hover {
-      border-color: var(--secondary-light);
-      background-color: #f0f7ff;
+      border-color: var(--shoppe-red);
+      background: linear-gradient(135deg, #fff0f0 0%, #ffe0e0 100%);
     }
     
     .signature-label {
@@ -336,11 +426,12 @@
     .signature-label label {
       margin: 0;
       font-size: 16px;
+      color: var(--shoppe-red);
     }
     
     .signature-label button {
       padding: 10px 18px;
-      background: linear-gradient(135deg, var(--error), #ff7675);
+      background: linear-gradient(135deg, var(--shoppe-red), #ff5252);
       color: white;
       border: none;
       border-radius: 8px;
@@ -355,7 +446,7 @@
     
     .signature-label button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 15px rgba(231, 76, 60, 0.2);
+      box-shadow: 0 8px 15px rgba(229, 57, 53, 0.2);
     }
     
     .signature-pad {
@@ -379,7 +470,7 @@
     .signature-instructions {
       text-align: center;
       font-size: 13px;
-      color: var(--text-light);
+      color: var(--shoppe-red);
       margin-top: 12px;
       font-style: italic;
     }
@@ -393,7 +484,7 @@
     .btn-submit {
       flex: 1;
       padding: 18px;
-      background: linear-gradient(135deg, var(--success), var(--success-light));
+      background: linear-gradient(135deg, var(--shoppe-red), var(--shoppe-orange));
       color: white;
       border: none;
       border-radius: 12px;
@@ -408,13 +499,13 @@
     }
     
     .btn-submit:hover {
-      background: linear-gradient(135deg, var(--success-light), var(--success));
-      box-shadow: 0 10px 20px rgba(39, 174, 96, 0.3);
+      background: linear-gradient(135deg, var(--shoppe-orange), var(--shoppe-red));
+      box-shadow: 0 10px 20px rgba(229, 57, 53, 0.3);
       transform: translateY(-2px);
     }
     
     .btn-submit:disabled {
-      background: #bdc3c7;
+      background: #bdbdbd;
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
@@ -425,15 +516,15 @@
       text-align: center;
       margin-top: 20px;
       padding: 20px;
-      background-color: #f8fafc;
+      background: linear-gradient(135deg, #fff8f8 0%, #fff0f0 100%);
       border-radius: 12px;
-      color: var(--primary);
+      color: var(--shoppe-red);
       font-weight: 600;
     }
     
     .loader i {
       margin-right: 10px;
-      color: var(--secondary);
+      color: var(--shoppe-red);
       animation: spin 1s linear infinite;
     }
     
@@ -450,6 +541,17 @@
       color: var(--text-light);
       font-size: 13px;
     }
+    
+    /* Estilo para os options do select */
+    option {
+      padding: 10px;
+    }
+    
+    option[value="Elogio"] { color: var(--shoppe-green); }
+    option[value="Orientação"] { color: var(--shoppe-blue); }
+    option[value="Comportamental"] { color: var(--shoppe-orange); }
+    option[value="PDI"] { color: var(--shoppe-red); }
+    option[value="Melhoria"] { color: var(--shoppe-yellow); }
     
     /* Responsividade */
     @media (max-width: 768px) {
@@ -476,6 +578,10 @@
       .signature-container {
         padding: 20px;
       }
+      
+      .nota-container {
+        padding: 15px;
+      }
     }
     
     @media (max-width: 480px) {
@@ -494,6 +600,15 @@
       .header-info h2 {
         font-size: 20px;
       }
+      
+      .nota-display {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nota-value {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -506,8 +621,8 @@
       <i class="fas fa-comment-dots"></i>
     </div>
     <div>
-      <h2> </h2>
-      <p class="login-subtitle">Sistema de Gestão de Feedback</p>
+      <h2>Sistema de Feedback</h2>
+      <p class="login-subtitle">Gestão de Avaliação de Desempenho</p>
     </div>
   </div>
   
@@ -584,7 +699,31 @@
               <option value="Orientação">💡 Orientação Técnica</option>
               <option value="Comportamental">👥 Comportamental</option>
               <option value="PDI">📈 Acompanhamento PDI</option>
+              <option value="Melhoria">🔧 Sugestão de Melhoria</option>
             </select>
+          </div>
+          
+          <div class="nota-container">
+            <label>Nota do Feedback</label>
+            <div class="nota-display">
+              <input type="range" 
+                     id="nota" 
+                     min="1" 
+                     max="10" 
+                     step="1" 
+                     value="5"
+                     class="nota-slider"
+                     oninput="updateNotaDisplay(this.value)">
+              <div class="nota-value" id="notaValue">5/10</div>
+            </div>
+            <div class="nota-labels">
+              <span>1 - Baixo</span>
+              <span>10 - Excelente</span>
+            </div>
+            <div class="nota-indicator">
+              <div class="nota-indicator-dot" id="notaIndicator"></div>
+              <span id="notaTexto">Neutro - Satisfatório</span>
+            </div>
           </div>
           
           <div class="input-group">
@@ -637,7 +776,7 @@
 
 <script>
   // URL do Google Apps Script
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxqVaOz5xrWn4Ad-VNRoeiO9XHQ9jSZtYWeEUTjBygLGrGJfzyR0FI8RmJ2QBvdCo6GGg/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDZvje-GFp51Ihe-QuLKwFlrGGIo01mtT0nZmEREQnZGbavHAndWG51FH0_mxP_C5OQw/exec";
   
   // Estado do login
   let usuarioLogado = null;
@@ -645,6 +784,49 @@
   let lastX = 0;
   let lastY = 0;
   let canvas, ctx;
+
+  // ===== FUNÇÕES PARA NOTA =====
+  function updateNotaDisplay(valor) {
+    const notaValue = document.getElementById('notaValue');
+    const notaIndicator = document.getElementById('notaIndicator');
+    const notaTexto = document.getElementById('notaTexto');
+    
+    // Atualizar valor
+    notaValue.textContent = valor + '/10';
+    
+    // Determinar cor e texto baseado no valor (usando cores Shoppe)
+    let cor, texto;
+    if (valor <= 3) {
+      cor = 'linear-gradient(135deg, #e53935, #d32f2f)';
+      texto = 'Baixo - Precisa de Melhoria';
+    } else if (valor <= 5) {
+      cor = 'linear-gradient(135deg, #ff6f00, #f57c00)';
+      texto = 'Regular - Abaixo do Esperado';
+    } else if (valor <= 7) {
+      cor = 'linear-gradient(135deg, #ff8a00, #ff9800)';
+      texto = 'Bom - Atende Expectativas';
+    } else if (valor <= 9) {
+      cor = 'linear-gradient(135deg, #ff9100, #ffab00)';
+      texto = 'Ótimo - Acima da Média';
+    } else {
+      cor = 'linear-gradient(135deg, #ffab00, #ffc400)';
+      texto = 'Excelente - Fora da Curva';
+    }
+    
+    // Aplicar cores
+    notaValue.style.background = cor;
+    notaIndicator.style.background = 'var(--shoppe-orange)';
+    notaTexto.textContent = texto;
+    
+    // Mudar cor do indicador baseado na nota
+    if (valor <= 3) {
+      notaIndicator.style.background = 'var(--shoppe-red)';
+    } else if (valor <= 7) {
+      notaIndicator.style.background = 'var(--shoppe-orange)';
+    } else {
+      notaIndicator.style.background = 'var(--shoppe-yellow)';
+    }
+  }
 
   // ===== INICIALIZAÇÃO DA ASSINATURA =====
   function initializeSignature() {
@@ -654,11 +836,11 @@
     // Configurar canvas
     resizeCanvas();
     
-    // Configurar estilo da linha
+    // Configurar estilo da linha (cor Shoppe)
     ctx.lineWidth = 3;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#2c3e50';
+    ctx.strokeStyle = '#e53935';
     
     // Adicionar event listeners
     canvas.addEventListener('mousedown', startDrawing);
@@ -682,8 +864,8 @@
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Adicionar guia de texto sutil
-    ctx.fillStyle = '#e2e8f0';
+    // Adicionar guia de texto sutil (cor Shoppe)
+    ctx.fillStyle = '#ffcdd2';
     ctx.font = 'italic 16px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -750,7 +932,7 @@
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Re-adicionar guia de texto
-    ctx.fillStyle = '#e2e8f0';
+    ctx.fillStyle = '#ffcdd2';
     ctx.font = 'italic 16px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -765,7 +947,7 @@
     const blankCtx = blankCanvas.getContext('2d');
     blankCtx.fillStyle = '#ffffff';
     blankCtx.fillRect(0, 0, blankCanvas.width, blankCanvas.height);
-    blankCtx.fillStyle = '#e2e8f0';
+    blankCtx.fillStyle = '#ffcdd2';
     blankCtx.font = 'italic 16px Arial';
     blankCtx.textAlign = 'center';
     blankCtx.textBaseline = 'middle';
@@ -824,6 +1006,8 @@
         setTimeout(() => {
           initializeSignature();
           carregarColaboradores();
+          // Inicializar display da nota
+          updateNotaDisplay(document.getElementById('nota').value);
         }, 100);
       } else {
         // Login falhou
@@ -886,6 +1070,7 @@
         
         // Adicionar estilo após carregar
         select.style.background = "white";
+        select.style.borderColor = "#e0e0e0";
       })
       .catch(err => {
         console.error("Erro ao carregar lista:", err);
@@ -898,7 +1083,12 @@
     e.preventDefault();
     
     if (!usuarioLogado) {
-      alert("Sessão expirada. Faça login novamente.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Sessão Expirada',
+        text: 'Faça login novamente.',
+        confirmButtonColor: '#e53935'
+      });
       sessionStorage.removeItem('feedback_usuario');
       location.reload();
       return;
@@ -907,17 +1097,22 @@
     // Verificar se há assinatura
     if (isSignatureEmpty()) {
       const signatureContainer = document.querySelector('.signature-container');
-      signatureContainer.style.borderColor = '#e74c3c';
-      signatureContainer.style.backgroundColor = '#fff5f5';
+      signatureContainer.style.borderColor = '#e53935';
+      signatureContainer.style.background = 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)';
       signatureContainer.style.animation = 'shake 0.5s';
       
       setTimeout(() => {
         signatureContainer.style.borderColor = '';
-        signatureContainer.style.backgroundColor = '';
+        signatureContainer.style.background = '';
         signatureContainer.style.animation = '';
       }, 2000);
       
-      alert("⚠️ Por favor, solicite ao colaborador que assine antes de enviar.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Assinatura Requerida',
+        text: 'Por favor, solicite ao colaborador que assine antes de enviar.',
+        confirmButtonColor: '#ff6f00'
+      });
       return;
     }
 
@@ -932,6 +1127,7 @@
       gestor: document.getElementById('gestor').value,
       colaborador: document.getElementById('colaborador').value,
       tipo: document.getElementById('tipo').value,
+      nota: document.getElementById('nota').value,
       mensagem: document.getElementById('mensagem').value,
       assinatura: canvas.toDataURL('image/png'),
       usuario: usuarioLogado.email
@@ -962,14 +1158,14 @@
       if(data.result === "success") {
         // Feedback bem-sucedido
         btn.innerHTML = '<i class="fas fa-check"></i> Enviado com Sucesso!';
-        btn.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+        btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
         
         // Mostrar mensagem de sucesso
         Swal.fire({
           icon: 'success',
           title: 'Feedback Registrado!',
           text: 'O feedback foi salvo no sistema com sucesso.',
-          confirmButtonColor: '#27ae60',
+          confirmButtonColor: '#4caf50',
           confirmButtonText: 'OK'
         });
         
@@ -977,6 +1173,7 @@
         setTimeout(() => {
           document.getElementById('feedbackForm').reset();
           clearSignature();
+          updateNotaDisplay(5); // Resetar nota para 5
           btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Feedback';
           btn.style.background = '';
           btn.disabled = false;
@@ -993,8 +1190,13 @@
       Swal.fire({
         icon: 'error',
         title: 'Erro ao Enviar',
-        text: error.message || 'Ocorreu um erro ao enviar o feedback. Tente novamente.',
-        confirmButtonColor: '#e74c3c',
+        html: `<div style="text-align: left;">
+                <p>${error.message || 'Ocorreu um erro ao enviar o feedback.'}</p>
+                <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                  <i class="fas fa-lightbulb"></i> Dica: Verifique sua conexão e tente novamente.
+                </p>
+              </div>`,
+        confirmButtonColor: '#e53935',
         confirmButtonText: 'Entendi'
       });
     })
@@ -1010,7 +1212,6 @@
   // Adicionar SweetAlert2 para alertas mais bonitos
   const Swal = {
     fire: function(options) {
-      // Fallback para alertas padrão se SweetAlert2 não estiver carregado
       if (typeof swal === 'undefined') {
         alert(options.title + (options.text ? '\n' + options.text : ''));
         return { isConfirmed: true };
@@ -1056,7 +1257,7 @@
   });
 </script>
 
-<!-- SweetAlert2 para alertas bonitos (opcional) -->
+<!-- SweetAlert2 para alertas bonitos -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
