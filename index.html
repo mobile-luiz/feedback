@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Feedback </title>
+  <title>Registro de Feedback - RH Pro</title>
   <style>
     :root {
       --primary: #2c3e50;
@@ -202,6 +202,7 @@
       color: white;
       margin-top: 20px;
       width: 100%;
+      display: none; /* Escondido por padrão */
     }
     
     button:hover {
@@ -226,6 +227,15 @@
       margin-bottom: 10px;
       font-size: 14px;
       color: #666;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+    }
+    
+    .user-info span {
+      font-weight: bold;
+      color: var(--primary);
     }
   </style>
 </head>
@@ -245,8 +255,8 @@
 <!-- Tela Principal do Sistema -->
 <div class="main-container" id="mainScreen">
   <div class="user-info" id="userInfo">
-    Usuário: <span id="loggedUser"></span>
-    <button type="button" class="btn-logout" onclick="logout()">Sair</button>
+    👤 Usuário: <span id="loggedUser"></span>
+    <!-- Botão Sair REMOVIDO -->
   </div>
   
   <div class="container">
@@ -294,8 +304,8 @@
 </div>
 
 <script>
-  // URL do Google Apps Script - VERIFIQUE SE ESTÁ CORRETA!
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2NRJoMayczzzMW1fS1H2UVygTWBPk5J19h_Ns_UWKmI7Ijn7lwoMAA8jnL2HwW9L_KA/exec";
+  // URL do Google Apps Script
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxqVaOz5xrWn4Ad-VNRoeiO9XHQ9jSZtYWeEUTjBygLGrGJfzyR0FI8RmJ2QBvdCo6GGg/exec";
   
   // Estado do login
   let usuarioLogado = null;
@@ -441,20 +451,16 @@
       },
       body: JSON.stringify({ email: email, senha: senha })
     })
-    .then(response => {
-      console.log('Resposta do login:', response);
-      return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-      console.log('Dados do login:', data);
       if (data.success) {
-        // Login bem-sucedido
+        // Login bem-sucedido - usar sessionStorage (dura apenas na sessão atual)
         usuarioLogado = {
           email: email,
-          nome: data.nome || email
+          nome: data.nome || email.split('@')[0]
         };
         
-        // Armazenar no sessionStorage
+        // Armazenar no sessionStorage (apenas para esta sessão)
         sessionStorage.setItem('feedback_usuario', JSON.stringify(usuarioLogado));
         
         // Mostrar tela principal
@@ -473,7 +479,7 @@
     })
     .catch(error => {
       console.error('Erro no login:', error);
-      errorDiv.textContent = "Erro de conexão. Verifique a URL do script.";
+      errorDiv.textContent = "Erro de conexão. Tente novamente.";
       errorDiv.style.display = 'block';
     })
     .finally(() => {
@@ -484,27 +490,17 @@
 
   // ===== VERIFICAR SE JÁ ESTÁ LOGADO =====
   window.addEventListener('load', function() {
-    const usuarioSalvo = sessionStorage.getItem('feedback_usuario');
+    // SEMPRE mostrar tela de login ao carregar
+    // Não verificar sessionStorage para forçar novo login
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('mainScreen').style.display = 'none';
     
-    if (usuarioSalvo) {
-      // Usuário já está logado
-      usuarioLogado = JSON.parse(usuarioSalvo);
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('mainScreen').style.display = 'block';
-      document.getElementById('loggedUser').textContent = usuarioLogado.nome;
-      
-      // Inicializar assinatura e carregar dados
-      initializeSignature();
-      carregarColaboradores();
-    }
-  });
-
-  // ===== LOGOUT =====
-  function logout() {
+    // Limpar qualquer sessão anterior
     sessionStorage.removeItem('feedback_usuario');
-    usuarioLogado = null;
-    location.reload();
-  }
+    
+    // Focar no campo de email
+    document.getElementById('loginEmail').focus();
+  });
 
   // ===== FUNÇÃO PARA CARREGAR COLABORADORES =====
   function carregarColaboradores() {
@@ -539,7 +535,8 @@
     
     if (!usuarioLogado) {
       alert("Sessão expirada. Faça login novamente.");
-      logout();
+      sessionStorage.removeItem('feedback_usuario');
+      location.reload();
       return;
     }
     
@@ -547,6 +544,9 @@
     if (isSignatureEmpty()) {
       alert("⚠️ O colaborador deve assinar antes de enviar.");
       document.getElementById('signaturePad').style.borderColor = '#e74c3c';
+      setTimeout(() => {
+        document.getElementById('signaturePad').style.borderColor = '#bbb';
+      }, 2000);
       return;
     }
 
@@ -557,112 +557,97 @@
     btn.innerText = "Enviando...";
     loader.style.display = "block";
 
-    // Obter a assinatura como base64 (reduzir tamanho se necessário)
-    let assinaturaData = canvas.toDataURL('image/png');
-    
-    // Se a assinatura for muito grande, podemos reduzir
-    if (assinaturaData.length > 100000) {
-      // Reduzir qualidade para 0.7 (70%)
-      assinaturaData = canvas.toDataURL('image/jpeg', 0.7);
-    }
-
     const formData = {
       gestor: document.getElementById('gestor').value,
       colaborador: document.getElementById('colaborador').value,
       tipo: document.getElementById('tipo').value,
       mensagem: document.getElementById('mensagem').value,
-      assinatura: assinaturaData,
+      assinatura: canvas.toDataURL('image/png'),
       usuario: usuarioLogado.email
     };
 
-    console.log('Enviando dados:', {
-      gestor: formData.gestor,
-      colaborador: formData.colaborador,
-      tipo: formData.tipo,
-      usuario: formData.usuario,
-      assinatura_tamanho: formData.assinatura.length
+    // Enviar com timeout para evitar travamento
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Timeout após 30 segundos')), 30000);
     });
 
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Modo no-cors para evitar problemas CORS
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8',
-      },
-      body: JSON.stringify(formData)
-    })
+    Promise.race([
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8',
+        },
+        body: JSON.stringify(formData)
+      }),
+      timeoutPromise
+    ])
     .then(response => {
-      console.log('Resposta bruta:', response);
-      // Como estamos em no-cors, não podemos ler a resposta
-      // Mas assumimos que foi bem-sucedido se chegou aqui
-      
-      alert("✅ Feedback registrado com sucesso!");
-      document.getElementById('feedbackForm').reset();
-      clearSignature();
-      
-      // Resetar o botão após 2 segundos
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.innerText = "Registrar Feedback";
-        loader.style.display = "none";
-      }, 2000);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      if(data.result === "success") {
+        alert("✅ Feedback registrado com sucesso!");
+        document.getElementById('feedbackForm').reset();
+        clearSignature();
+      } else {
+        alert("❌ Erro: " + (data.error || "Desconhecido"));
+      }
     })
     .catch(error => {
-      console.error('Erro no fetch:', error);
+      console.error('Erro ao enviar:', error);
       
-      // Mesmo com erro, tentar enviar de forma alternativa
-      enviarDadosAlternativo(formData)
+      // Tentar método alternativo
+      enviarDadosFallback(formData)
         .then(() => {
-          alert("✅ Feedback enviado com sucesso!");
+          alert("✅ Feedback enviado (modo alternativo)!");
           document.getElementById('feedbackForm').reset();
           clearSignature();
         })
-        .catch(() => {
-          alert("⚠️ O feedback pode ter sido enviado. Verifique na planilha.\nErro: " + error.message);
-        })
-        .finally(() => {
-          btn.disabled = false;
-          btn.innerText = "Registrar Feedback";
-          loader.style.display = "none";
+        .catch(fallbackError => {
+          console.error('Erro no fallback:', fallbackError);
+          alert("⚠️ Pode ter havido um problema. Verifique se o feedback foi salvo.\nErro: " + error.message);
         });
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.innerText = "Registrar Feedback";
+      loader.style.display = "none";
     });
   });
 
-  // Função alternativa para enviar dados
-  function enviarDadosAlternativo(data) {
+  // Método alternativo para enviar dados
+  function enviarDadosFallback(data) {
     return new Promise((resolve, reject) => {
-      // Criar um formulário tradicional como fallback
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = SCRIPT_URL;
-      form.style.display = 'none';
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', SCRIPT_URL, true);
+      xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
       
-      // Adicionar campos
-      for (const key in data) {
-        if (key === 'assinatura') {
-          // Para a assinatura, enviar apenas os primeiros 1000 chars se for muito grande
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = data[key].substring(0, 10000); // Limitar tamanho
-          form.appendChild(input);
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            if (response.result === "success") {
+              resolve();
+            } else {
+              reject(new Error(response.error || "Erro desconhecido"));
+            }
+          } catch (e) {
+            // Se não conseguir parsear JSON, mas teve resposta, assume sucesso
+            resolve();
+          }
         } else {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = data[key];
-          form.appendChild(input);
+          reject(new Error(`HTTP ${xhr.status}`));
         }
-      }
+      };
       
-      document.body.appendChild(form);
-      form.submit();
+      xhr.onerror = function() {
+        reject(new Error('Erro de rede'));
+      };
       
-      // Esperar um pouco antes de resolver
-      setTimeout(() => {
-        document.body.removeChild(form);
-        resolve();
-      }, 3000);
+      xhr.send(JSON.stringify(data));
     });
   }
 
@@ -670,6 +655,13 @@
   window.addEventListener('resize', function() {
     if (canvas) {
       resizeCanvas();
+    }
+  });
+
+  // Adicionar funcionalidade de limpar formulário com ESC
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      clearSignature();
     }
   });
 </script>
