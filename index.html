@@ -3,158 +3,371 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Feedback - RH Pro</title>
+  <title>RH Pro | Sistema de Feedback</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
       --primary: #2c3e50;
+      --primary-light: #34495e;
       --secondary: #3498db;
-      --bg: #f4f7f6;
+      --secondary-light: #5dade2;
       --success: #27ae60;
+      --success-light: #2ecc71;
+      --warning: #f39c12;
       --error: #e74c3c;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #2d3748;
+      --text-light: #718096;
+      --border: #e2e8f0;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
+      --radius: 16px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
     
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       padding: 20px;
+      color: var(--text);
+      line-height: 1.6;
     }
     
     /* Tela de Login */
     .login-container {
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      background: var(--card-bg);
+      padding: 50px 40px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       text-align: center;
       display: block;
+      transition: var(--transition);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--secondary), var(--success));
+    }
+    
+    .login-container:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-5px);
+    }
+    
+    .login-logo {
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logo-icon {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 32px;
+      box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
     }
     
     .login-container h2 {
       color: var(--primary);
-      margin-bottom: 30px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid var(--secondary);
+      margin-bottom: 10px;
+      font-weight: 700;
+      font-size: 28px;
+    }
+    
+    .login-subtitle {
+      color: var(--text-light);
+      margin-bottom: 35px;
+      font-size: 15px;
+    }
+    
+    .input-group {
+      position: relative;
+      margin-bottom: 25px;
+      text-align: left;
+    }
+    
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 14px;
+    }
+    
+    .input-icon {
+      position: absolute;
+      left: 18px;
+      top: 42px;
+      color: var(--text-light);
+      font-size: 18px;
     }
     
     .login-container input {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
+      padding: 16px 20px 16px 52px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      transition: var(--transition);
+      background-color: #fcfdfe;
+      color: var(--text);
+    }
+    
+    .login-container input:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      background-color: white;
     }
     
     .login-container button {
       width: 100%;
-      padding: 12px;
-      background: var(--success);
+      padding: 18px;
+      background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
       color: white;
       border: none;
-      border-radius: 6px;
-      font-weight: bold;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
       cursor: pointer;
-      transition: 0.3s;
+      transition: var(--transition);
       margin-top: 10px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
     
     .login-container button:hover {
-      opacity: 0.9;
+      background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
+      box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .login-container button:active {
+      transform: translateY(0);
     }
     
     .login-error {
       color: var(--error);
-      margin-top: 10px;
+      margin-top: 15px;
       font-size: 14px;
       display: none;
+      padding: 12px;
+      background-color: rgba(231, 76, 60, 0.08);
+      border-radius: 8px;
+      border-left: 4px solid var(--error);
     }
     
-    /* Tela Principal (feedback) - inicialmente escondida */
+    /* Tela Principal (feedback) */
     .main-container {
       display: none;
       width: 100%;
-      max-width: 500px;
+      max-width: 600px;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      padding: 25px 30px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 5px 15px rgba(44, 62, 80, 0.2);
+    }
+    
+    .header-info h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .header-info p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .user-badge {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px 18px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .user-badge i {
+      font-size: 18px;
     }
     
     .container {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      background: var(--card-bg);
+      border-radius: 0 0 var(--radius) var(--radius);
+      box-shadow: var(--shadow);
       width: 100%;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-top: none;
     }
-
-    .container h2 {
+    
+    .form-content {
+      padding: 35px 30px;
+    }
+    
+    .form-section {
+      margin-bottom: 30px;
+    }
+    
+    .form-section h3 {
+      font-size: 18px;
       color: var(--primary);
-      text-align: center;
       margin-bottom: 20px;
-      border-bottom: 2px solid var(--secondary);
       padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-
+    
+    .form-section h3 i {
+      color: var(--secondary);
+    }
+    
     label {
       display: block;
-      margin: 15px 0 5px;
-      color: #555;
+      margin: 0 0 8px 5px;
+      color: var(--primary);
       font-weight: 600;
+      font-size: 14px;
     }
     
     input, select, textarea {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      box-sizing: border-box;
-      font-size: 14px;
+      padding: 16px 20px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      transition: var(--transition);
+      background-color: #fcfdfe;
+      color: var(--text);
     }
-
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      background-color: white;
+    }
+    
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 20px center;
+      background-size: 18px;
+      padding-right: 50px;
+    }
+    
     textarea {
-      height: 100px;
+      height: 120px;
       resize: vertical;
+      line-height: 1.5;
     }
-
+    
     .signature-container {
-      margin: 15px 0;
+      margin: 25px 0;
+      padding: 25px;
+      background-color: #f8fafc;
+      border-radius: 12px;
+      border: 2px dashed var(--border);
+      transition: var(--transition);
     }
-
+    
+    .signature-container:hover {
+      border-color: var(--secondary-light);
+      background-color: #f0f7ff;
+    }
+    
     .signature-label {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 5px;
+      margin-bottom: 15px;
     }
-
+    
+    .signature-label label {
+      margin: 0;
+      font-size: 16px;
+    }
+    
     .signature-label button {
-      padding: 5px 10px;
-      font-size: 12px;
-      background: var(--error);
+      padding: 10px 18px;
+      background: linear-gradient(135deg, var(--error), #ff7675);
       color: white;
       border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .signature-pad {
-      border: 2px dashed #bbb;
       border-radius: 8px;
-      background: #fafafa;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .signature-label button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(231, 76, 60, 0.2);
+    }
+    
+    .signature-pad {
+      border-radius: 10px;
+      background: white;
       width: 100%;
-      height: 180px;
+      height: 200px;
       position: relative;
       cursor: crosshair;
       overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
     }
     
     #signatureCanvas {
@@ -162,80 +375,125 @@
       height: 100%;
       display: block;
     }
-
+    
     .signature-instructions {
       text-align: center;
-      font-size: 11px;
-      color: #888;
-      margin-top: 4px;
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 12px;
       font-style: italic;
     }
-
+    
     .btn-group {
       display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    button {
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      flex: 1;
-      transition: 0.3s;
-    }
-
-    .btn-clear {
-      background: #e74c3c;
-      color: white;
+      gap: 15px;
+      margin-top: 30px;
     }
     
     .btn-submit {
-      background: var(--success);
+      flex: 1;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--success), var(--success-light));
       color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
     
-    .btn-logout {
-      background: var(--primary);
-      color: white;
-      margin-top: 20px;
-      width: 100%;
-      display: none; /* Escondido por padrão */
+    .btn-submit:hover {
+      background: linear-gradient(135deg, var(--success-light), var(--success));
+      box-shadow: 0 10px 20px rgba(39, 174, 96, 0.3);
+      transform: translateY(-2px);
     }
     
-    button:hover {
-      opacity: 0.9;
-    }
-    
-    button:disabled {
-      background: #ccc;
+    .btn-submit:disabled {
+      background: #bdc3c7;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
-
+    
     .loader {
       display: none;
       text-align: center;
-      margin-top: 15px;
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #f8fafc;
+      border-radius: 12px;
       color: var(--primary);
-      font-weight: bold;
+      font-weight: 600;
     }
     
-    .user-info {
-      text-align: right;
-      margin-bottom: 10px;
-      font-size: 14px;
-      color: #666;
-      padding: 10px;
-      background: #f8f9fa;
-      border-radius: 6px;
-      border: 1px solid #e9ecef;
+    .loader i {
+      margin-right: 10px;
+      color: var(--secondary);
+      animation: spin 1s linear infinite;
     }
     
-    .user-info span {
-      font-weight: bold;
-      color: var(--primary);
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .form-footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 13px;
+    }
+    
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .login-container, .container {
+        padding: 35px 25px;
+      }
+      
+      .header {
+        padding: 20px;
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      
+      .user-badge {
+        align-self: stretch;
+        justify-content: center;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      .signature-container {
+        padding: 20px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+      }
+      
+      .login-container, .container {
+        padding: 30px 20px;
+      }
+      
+      .login-container h2 {
+        font-size: 24px;
+      }
+      
+      .header-info h2 {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
@@ -243,63 +501,137 @@
 
 <!-- Tela de Login -->
 <div class="login-container" id="loginScreen">
-  <h2>🔐 Login - Sistema de Feedback</h2>
+  <div class="login-logo">
+    <div class="logo-icon">
+      <i class="fas fa-comment-dots"></i>
+    </div>
+    <div>
+      <h2>RH Pro</h2>
+      <p class="login-subtitle">Sistema de Gestão de Feedback</p>
+    </div>
+  </div>
+  
   <form id="loginForm">
-    <input type="email" id="loginEmail" placeholder="E-mail" required>
-    <input type="password" id="loginSenha" placeholder="Senha" required>
-    <button type="submit">Entrar</button>
-    <div class="login-error" id="loginError">E-mail ou senha inválidos!</div>
+    <div class="input-group">
+      <label for="loginEmail"><i class="fas fa-envelope"></i> E-mail</label>
+      <div class="input-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <input type="email" id="loginEmail" placeholder="seu.email@empresa.com" required>
+    </div>
+    
+    <div class="input-group">
+      <label for="loginSenha"><i class="fas fa-lock"></i> Senha</label>
+      <div class="input-icon">
+        <i class="fas fa-key"></i>
+      </div>
+      <input type="password" id="loginSenha" placeholder="••••••••" required>
+    </div>
+    
+    <button type="submit">
+      <i class="fas fa-sign-in-alt"></i>
+      Entrar no Sistema
+    </button>
+    
+    <div class="login-error" id="loginError">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="errorText">E-mail ou senha inválidos!</span>
+    </div>
   </form>
+  
+  <div class="form-footer">
+    <p>© 2023 RH Pro. Todos os direitos reservados.</p>
+  </div>
 </div>
 
 <!-- Tela Principal do Sistema -->
 <div class="main-container" id="mainScreen">
-  <div class="user-info" id="userInfo">
-    👤 Usuário: <span id="loggedUser"></span>
-    <!-- Botão Sair REMOVIDO -->
+  <div class="header">
+    <div class="header-info">
+      <h2><i class="fas fa-comments"></i> Registro de Feedback</h2>
+      <p>Preencha os dados abaixo para registrar um feedback</p>
+    </div>
+    
+    <div class="user-badge" id="userInfo">
+      <i class="fas fa-user-circle"></i>
+      <span>Usuário: <strong id="loggedUser"></strong></span>
+    </div>
   </div>
   
   <div class="container">
-    <h2>📝 Registro de Feedback</h2>
-    
-    <form id="feedbackForm">
-      <label>Nome do Gestor</label>
-      <input type="text" id="gestor" placeholder="Quem está aplicando?" required>
-
-      <label>Nome do Colaborador (Matrícula - Nome)</label>
-      <select id="colaborador" required disabled>
-        <option value="">Carregando colaboradores...</option>
-      </select>
-
-      <label>Tipo de Feedback</label>
-      <select id="tipo" required>
-        <option value="">Selecione o tipo...</option>
-        <option value="Elogio">Elogio</option>
-        <option value="Orientação">Orientação Técnica</option>
-        <option value="Comportamental">Comportamental</option>
-        <option value="PDI">Acompanhamento PDI</option>
-      </select>
-
-      <label>Descrição do Feedback</label>
-      <textarea id="mensagem" placeholder="Descreva os pontos abordados..." required></textarea>
-
-      <div class="signature-container">
-        <div class="signature-label">
-          <label style="margin: 0;">Assinatura do Colaborador</label>
-          <button type="button" onclick="clearSignature()">Limpar</button>
+    <div class="form-content">
+      <form id="feedbackForm">
+        <div class="form-section">
+          <h3><i class="fas fa-user-tie"></i> Informações do Feedback</h3>
+          
+          <div class="input-group">
+            <label for="gestor">Nome do Gestor</label>
+            <input type="text" id="gestor" placeholder="Quem está aplicando o feedback?" required>
+          </div>
+          
+          <div class="input-group">
+            <label for="colaborador">Colaborador</label>
+            <select id="colaborador" required disabled>
+              <option value="">Carregando lista de colaboradores...</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label for="tipo">Tipo de Feedback</label>
+            <select id="tipo" required>
+              <option value="">Selecione o tipo de feedback...</option>
+              <option value="Elogio">🎉 Elogio</option>
+              <option value="Orientação">💡 Orientação Técnica</option>
+              <option value="Comportamental">👥 Comportamental</option>
+              <option value="PDI">📈 Acompanhamento PDI</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label for="mensagem">Descrição do Feedback</label>
+            <textarea id="mensagem" placeholder="Descreva os pontos abordados no feedback, observações importantes, resultados esperados, etc." required></textarea>
+          </div>
         </div>
-        <div class="signature-pad" id="signaturePad">
-          <canvas id="signatureCanvas"></canvas>
+        
+        <div class="form-section">
+          <h3><i class="fas fa-signature"></i> Assinatura do Colaborador</h3>
+          
+          <div class="signature-container">
+            <div class="signature-label">
+              <label>Assine no espaço abaixo</label>
+              <button type="button" onclick="clearSignature()">
+                <i class="fas fa-eraser"></i>
+                Limpar Assinatura
+              </button>
+            </div>
+            
+            <div class="signature-pad" id="signaturePad">
+              <canvas id="signatureCanvas"></canvas>
+            </div>
+            
+            <div class="signature-instructions">
+              <i class="fas fa-mouse-pointer"></i> Clique e arraste para assinar acima (toque e arraste em dispositivos móveis)
+            </div>
+          </div>
         </div>
-        <div class="signature-instructions">Clique e arraste para assinar acima</div>
-      </div>
-
-      <div class="btn-group">
-        <button type="submit" class="btn-submit" id="btnEnviar">Registrar Feedback</button>
-      </div>
+        
+        <div class="btn-group">
+          <button type="submit" class="btn-submit" id="btnEnviar">
+            <i class="fas fa-paper-plane"></i>
+            Registrar Feedback
+          </button>
+        </div>
+        
+        <div class="loader" id="loader">
+          <i class="fas fa-circle-notch"></i>
+          Enviando feedback para o sistema...
+        </div>
+      </form>
       
-      <div class="loader" id="loader">Enviando para o sistema...</div>
-    </form>
+      <div class="form-footer">
+        <p><i class="fas fa-shield-alt"></i> Os dados são armazenados de forma segura e confidencial.</p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -323,10 +655,10 @@
     resizeCanvas();
     
     // Configurar estilo da linha
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 3;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#000000';
+    ctx.strokeStyle = '#2c3e50';
     
     // Adicionar event listeners
     canvas.addEventListener('mousedown', startDrawing);
@@ -346,9 +678,16 @@
     canvas.width = container.clientWidth;
     canvas.height = container.clientHeight;
     
-    // Limpar canvas
-    ctx.fillStyle = '#fafafa';
+    // Limpar canvas com fundo branco
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Adicionar guia de texto sutil
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = 'italic 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Assine aqui', canvas.width / 2, canvas.height / 2);
   }
 
   function getMousePos(e) {
@@ -407,18 +746,30 @@
   }
 
   function clearSignature() {
-    ctx.fillStyle = '#fafafa';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Re-adicionar guia de texto
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = 'italic 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Assine aqui', canvas.width / 2, canvas.height / 2);
   }
 
   function isSignatureEmpty() {
-    // Verificar se o canvas está vazio
+    // Verificar se o canvas está vazio (apenas com o texto guia)
     const blankCanvas = document.createElement('canvas');
     blankCanvas.width = canvas.width;
     blankCanvas.height = canvas.height;
     const blankCtx = blankCanvas.getContext('2d');
-    blankCtx.fillStyle = '#fafafa';
+    blankCtx.fillStyle = '#ffffff';
     blankCtx.fillRect(0, 0, blankCanvas.width, blankCanvas.height);
+    blankCtx.fillStyle = '#e2e8f0';
+    blankCtx.font = 'italic 16px Arial';
+    blankCtx.textAlign = 'center';
+    blankCtx.textBaseline = 'middle';
+    blankCtx.fillText('Assine aqui', blankCanvas.width / 2, blankCanvas.height / 2);
     
     return canvas.toDataURL() === blankCanvas.toDataURL();
   }
@@ -430,10 +781,11 @@
     const email = document.getElementById('loginEmail').value.trim();
     const senha = document.getElementById('loginSenha').value;
     const errorDiv = document.getElementById('loginError');
+    const errorText = document.getElementById('errorText');
     
     // Validar e-mail básico
     if (!email.includes('@')) {
-      errorDiv.textContent = "Por favor, insira um e-mail válido";
+      errorText.textContent = "Por favor, insira um e-mail válido";
       errorDiv.style.display = 'block';
       return;
     }
@@ -441,7 +793,7 @@
     // Mostrar loading
     const loginBtn = e.target.querySelector('button');
     loginBtn.disabled = true;
-    loginBtn.textContent = "Verificando...";
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
     
     // Enviar dados para verificação
     fetch(SCRIPT_URL + "?action=login", {
@@ -454,7 +806,7 @@
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        // Login bem-sucedido - usar sessionStorage (dura apenas na sessão atual)
+        // Login bem-sucedido
         usuarioLogado = {
           email: email,
           nome: data.nome || email.split('@')[0]
@@ -463,35 +815,42 @@
         // Armazenar no sessionStorage (apenas para esta sessão)
         sessionStorage.setItem('feedback_usuario', JSON.stringify(usuarioLogado));
         
-        // Mostrar tela principal
+        // Mostrar tela principal com animação
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('mainScreen').style.display = 'block';
         document.getElementById('loggedUser').textContent = usuarioLogado.nome;
         
         // Inicializar assinatura e carregar dados
-        initializeSignature();
-        carregarColaboradores();
+        setTimeout(() => {
+          initializeSignature();
+          carregarColaboradores();
+        }, 100);
       } else {
         // Login falhou
-        errorDiv.textContent = data.message || "E-mail ou senha inválidos!";
+        errorText.textContent = data.message || "E-mail ou senha inválidos!";
         errorDiv.style.display = 'block';
+        
+        // Adicionar animação de erro
+        errorDiv.style.animation = 'shake 0.5s';
+        setTimeout(() => {
+          errorDiv.style.animation = '';
+        }, 500);
       }
     })
     .catch(error => {
       console.error('Erro no login:', error);
-      errorDiv.textContent = "Erro de conexão. Tente novamente.";
+      errorText.textContent = "Erro de conexão. Verifique sua internet e tente novamente.";
       errorDiv.style.display = 'block';
     })
     .finally(() => {
       loginBtn.disabled = false;
-      loginBtn.textContent = "Entrar";
+      loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar no Sistema';
     });
   });
 
   // ===== VERIFICAR SE JÁ ESTÁ LOGADO =====
   window.addEventListener('load', function() {
     // SEMPRE mostrar tela de login ao carregar
-    // Não verificar sessionStorage para forçar novo login
     document.getElementById('loginScreen').style.display = 'block';
     document.getElementById('mainScreen').style.display = 'none';
     
@@ -499,7 +858,9 @@
     sessionStorage.removeItem('feedback_usuario');
     
     // Focar no campo de email
-    document.getElementById('loginEmail').focus();
+    setTimeout(() => {
+      document.getElementById('loginEmail').focus();
+    }, 300);
   });
 
   // ===== FUNÇÃO PARA CARREGAR COLABORADORES =====
@@ -522,10 +883,13 @@
           select.appendChild(opt);
         });
         select.disabled = false;
+        
+        // Adicionar estilo após carregar
+        select.style.background = "white";
       })
       .catch(err => {
         console.error("Erro ao carregar lista:", err);
-        select.innerHTML = '<option value="">Erro ao carregar (verifique a conexão)</option>';
+        select.innerHTML = '<option value="">Erro ao carregar. Verifique a conexão.</option>';
       });
   }
 
@@ -542,11 +906,18 @@
     
     // Verificar se há assinatura
     if (isSignatureEmpty()) {
-      alert("⚠️ O colaborador deve assinar antes de enviar.");
-      document.getElementById('signaturePad').style.borderColor = '#e74c3c';
+      const signatureContainer = document.querySelector('.signature-container');
+      signatureContainer.style.borderColor = '#e74c3c';
+      signatureContainer.style.backgroundColor = '#fff5f5';
+      signatureContainer.style.animation = 'shake 0.5s';
+      
       setTimeout(() => {
-        document.getElementById('signaturePad').style.borderColor = '#bbb';
+        signatureContainer.style.borderColor = '';
+        signatureContainer.style.backgroundColor = '';
+        signatureContainer.style.animation = '';
       }, 2000);
+      
+      alert("⚠️ Por favor, solicite ao colaborador que assine antes de enviar.");
       return;
     }
 
@@ -554,7 +925,7 @@
     const loader = document.getElementById('loader');
     
     btn.disabled = true;
-    btn.innerText = "Enviando...";
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
     loader.style.display = "block";
 
     const formData = {
@@ -566,9 +937,9 @@
       usuario: usuarioLogado.email
     };
 
-    // Enviar com timeout para evitar travamento
+    // Enviar com timeout
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Timeout após 30 segundos')), 30000);
+      setTimeout(() => reject(new Error('Tempo limite excedido. Tente novamente.')), 30000);
     });
 
     Promise.race([
@@ -583,73 +954,70 @@
     ])
     .then(response => {
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        throw new Error(`Erro ${response.status}: ${response.statusText}`);
       }
       return response.json();
     })
     .then(data => {
       if(data.result === "success") {
-        alert("✅ Feedback registrado com sucesso!");
-        document.getElementById('feedbackForm').reset();
-        clearSignature();
+        // Feedback bem-sucedido
+        btn.innerHTML = '<i class="fas fa-check"></i> Enviado com Sucesso!';
+        btn.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+        
+        // Mostrar mensagem de sucesso
+        Swal.fire({
+          icon: 'success',
+          title: 'Feedback Registrado!',
+          text: 'O feedback foi salvo no sistema com sucesso.',
+          confirmButtonColor: '#27ae60',
+          confirmButtonText: 'OK'
+        });
+        
+        // Limpar formulário após 2 segundos
+        setTimeout(() => {
+          document.getElementById('feedbackForm').reset();
+          clearSignature();
+          btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Feedback';
+          btn.style.background = '';
+          btn.disabled = false;
+          loader.style.display = "none";
+        }, 2000);
       } else {
-        alert("❌ Erro: " + (data.error || "Desconhecido"));
+        throw new Error(data.error || "Erro desconhecido");
       }
     })
     .catch(error => {
       console.error('Erro ao enviar:', error);
       
-      // Tentar método alternativo
-      enviarDadosFallback(formData)
-        .then(() => {
-          alert("✅ Feedback enviado (modo alternativo)!");
-          document.getElementById('feedbackForm').reset();
-          clearSignature();
-        })
-        .catch(fallbackError => {
-          console.error('Erro no fallback:', fallbackError);
-          alert("⚠️ Pode ter havido um problema. Verifique se o feedback foi salvo.\nErro: " + error.message);
-        });
+      // Mostrar mensagem de erro
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao Enviar',
+        text: error.message || 'Ocorreu um erro ao enviar o feedback. Tente novamente.',
+        confirmButtonColor: '#e74c3c',
+        confirmButtonText: 'Entendi'
+      });
     })
     .finally(() => {
-      btn.disabled = false;
-      btn.innerText = "Registrar Feedback";
-      loader.style.display = "none";
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Feedback';
+        loader.style.display = "none";
+      }, 3000);
     });
   });
 
-  // Método alternativo para enviar dados
-  function enviarDadosFallback(data) {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', SCRIPT_URL, true);
-      xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
-      
-      xhr.onload = function() {
-        if (xhr.status === 200) {
-          try {
-            const response = JSON.parse(xhr.responseText);
-            if (response.result === "success") {
-              resolve();
-            } else {
-              reject(new Error(response.error || "Erro desconhecido"));
-            }
-          } catch (e) {
-            // Se não conseguir parsear JSON, mas teve resposta, assume sucesso
-            resolve();
-          }
-        } else {
-          reject(new Error(`HTTP ${xhr.status}`));
-        }
-      };
-      
-      xhr.onerror = function() {
-        reject(new Error('Erro de rede'));
-      };
-      
-      xhr.send(JSON.stringify(data));
-    });
-  }
+  // Adicionar SweetAlert2 para alertas mais bonitos
+  const Swal = {
+    fire: function(options) {
+      // Fallback para alertas padrão se SweetAlert2 não estiver carregado
+      if (typeof swal === 'undefined') {
+        alert(options.title + (options.text ? '\n' + options.text : ''));
+        return { isConfirmed: true };
+      }
+      return swal.fire(options);
+    }
+  };
 
   // Redimensionar canvas quando a janela for redimensionada
   window.addEventListener('resize', function() {
@@ -658,13 +1026,39 @@
     }
   });
 
-  // Adicionar funcionalidade de limpar formulário com ESC
+  // Adicionar animação de shake
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Adicionar funcionalidade de limpar assinatura com ESC
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       clearSignature();
     }
   });
+
+  // Adicionar placeholder dinâmico para o campo de gestor
+  document.getElementById('gestor').addEventListener('focus', function() {
+    if (usuarioLogado && !this.value) {
+      this.placeholder = `Ex: ${usuarioLogado.nome} (se for você)`;
+    }
+  });
+  
+  document.getElementById('gestor').addEventListener('blur', function() {
+    this.placeholder = "Quem está aplicando o feedback?";
+  });
 </script>
+
+<!-- SweetAlert2 para alertas bonitos (opcional) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 </html>
