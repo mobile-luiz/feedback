@@ -18,6 +18,9 @@
       --shoppe-green: #4caf50;
       --shoppe-blue: #2196f3;
       --shoppe-yellow: #ffc107;
+      --shoppe-purple: #9c27b0;
+      --shoppe-teal: #009688;
+      --shoppe-brown: #795548;
       --primary: var(--shoppe-dark);
       --primary-light: #424242;
       --secondary: var(--shoppe-red);
@@ -465,6 +468,7 @@
       width: 100%;
       height: 100%;
       display: block;
+      background: white;
     }
     
     .signature-instructions {
@@ -552,6 +556,11 @@
     option[value="Comportamental"] { color: var(--shoppe-orange); }
     option[value="PDI"] { color: var(--shoppe-red); }
     option[value="Melhoria"] { color: var(--shoppe-yellow); }
+    option[value="Qualidade Putaway"] { color: var(--shoppe-purple); }
+    option[value="Sugestão de Melhoria"] { color: var(--shoppe-teal); }
+    option[value="OB Verdadeiro - PNE"] { color: var(--shoppe-brown); }
+    option[value="OB Verdadeiro - PE"] { color: var(--shoppe-brown); }
+    option[value="OB Falso"] { color: var(--shoppe-gray); }
     
     /* Responsividade */
     @media (max-width: 768px) {
@@ -614,15 +623,15 @@
 </head>
 <body>
 
-<!-- Tela de Login -->
+<!-- Tela de Login SIMPLIFICADA -->
 <div class="login-container" id="loginScreen">
   <div class="login-logo">
     <div class="logo-icon">
       <i class="fas fa-comment-dots"></i>
     </div>
     <div>
-      <h2>Sistema de Feedback</h2>
-      <p class="login-subtitle">Gestão de Avaliação de Desempenho</p>
+      <h2 style="font-size: 1.2rem; margin: 0; font-weight: 600;">Registro de Feedback | Diffs e Ocorrencias da qualidade</h2>
+      <p class="login-subtitle">  </p>
     </div>
   </div>
   
@@ -635,22 +644,20 @@
       <input type="email" id="loginEmail" placeholder="seu.email@empresa.com" required>
     </div>
     
-    <div class="input-group">
-      <label for="loginSenha"><i class="fas fa-lock"></i> Senha</label>
-      <div class="input-icon">
-        <i class="fas fa-key"></i>
-      </div>
-      <input type="password" id="loginSenha" placeholder="••••••••" required>
+    <div class="login-info">
+      <p style="text-align: center; color: var(--shoppe-gray); font-size: 14px; margin: 15px 0 25px;">
+        <i class="fas fa-info-circle"></i> Digite seu e-mail corporativo para acessar o sistema
+      </p>
     </div>
     
     <button type="submit">
       <i class="fas fa-sign-in-alt"></i>
-      Entrar no Sistema
+      Acessar Sistema
     </button>
     
     <div class="login-error" id="loginError">
       <i class="fas fa-exclamation-circle"></i>
-      <span id="errorText">E-mail ou senha inválidos!</span>
+      <span id="errorText">E-mail inválido!</span>
     </div>
   </form>
   
@@ -695,11 +702,11 @@
             <label for="tipo">Tipo de Feedback</label>
             <select id="tipo" required>
               <option value="">Selecione o tipo de feedback...</option>
-              <option value="Elogio">🎉 Elogio</option>
-              <option value="Orientação">💡 Orientação Técnica</option>
-              <option value="Comportamental">👥 Comportamental</option>
-              <option value="PDI">📈 Acompanhamento PDI</option>
-              <option value="Melhoria">🔧 Sugestão de Melhoria</option>
+              <option value="Qualidade Putaway">📦 Qualidade Putaway</option>
+              <option value="Sugestão de Melhoria">💡 Sugestão de Melhoria</option>
+              <option value="OB Verdadeiro - PNE">✅ OB Verdadeiro - PNE</option>
+              <option value="OB Verdadeiro - PE">✅ OB Verdadeiro - PE</option>
+              <option value="OB Falso">❌ OB Falso</option>
             </select>
           </div>
           
@@ -778,12 +785,18 @@
   // URL do Google Apps Script
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDZvje-GFp51Ihe-QuLKwFlrGGIo01mtT0nZmEREQnZGbavHAndWG51FH0_mxP_C5OQw/exec";
   
-  // Estado do login
+  // Estado do sistema
   let usuarioLogado = null;
   let isDrawing = false;
   let lastX = 0;
   let lastY = 0;
   let canvas, ctx;
+  let enviando = false;
+  
+  // Configurações para otimização da assinatura
+  const CANVAS_WIDTH = 400;  // Largura fixa reduzida
+  const CANVAS_HEIGHT = 150; // Altura fixa reduzida
+  const LINE_WIDTH = 2;      // Espessura da linha reduzida
 
   // ===== FUNÇÕES PARA NOTA =====
   function updateNotaDisplay(valor) {
@@ -794,7 +807,7 @@
     // Atualizar valor
     notaValue.textContent = valor + '/10';
     
-    // Determinar cor e texto baseado no valor (usando cores Shoppe)
+    // Determinar cor e texto baseado no valor
     let cor, texto;
     if (valor <= 3) {
       cor = 'linear-gradient(135deg, #e53935, #d32f2f)';
@@ -828,19 +841,23 @@
     }
   }
 
-  // ===== INICIALIZAÇÃO DA ASSINATURA =====
+  // ===== INICIALIZAÇÃO DA ASSINATURA OTIMIZADA =====
   function initializeSignature() {
     canvas = document.getElementById('signatureCanvas');
     ctx = canvas.getContext('2d');
     
-    // Configurar canvas
-    resizeCanvas();
+    // Configurar canvas com tamanho fixo e reduzido
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
     
-    // Configurar estilo da linha (cor Shoppe)
-    ctx.lineWidth = 3;
+    // Configurar estilo da linha (mais fina para menos dados)
+    ctx.lineWidth = LINE_WIDTH;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.strokeStyle = '#e53935';
+    
+    // Limpar canvas com fundo branco
+    clearCanvas();
     
     // Adicionar event listeners
     canvas.addEventListener('mousedown', startDrawing);
@@ -854,19 +871,14 @@
     canvas.addEventListener('touchend', stopDrawing);
   }
 
-  // ===== FUNÇÕES DA ASSINATURA =====
-  function resizeCanvas() {
-    const container = document.getElementById('signaturePad');
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
-    
-    // Limpar canvas com fundo branco
+  // ===== FUNÇÕES DA ASSINATURA OTIMIZADAS =====
+  function clearCanvas() {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Adicionar guia de texto sutil (cor Shoppe)
+    // Adicionar guia de texto sutil
     ctx.fillStyle = '#ffcdd2';
-    ctx.font = 'italic 16px Arial';
+    ctx.font = 'italic 14px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('Assine aqui', canvas.width / 2, canvas.height / 2);
@@ -874,17 +886,23 @@
 
   function getMousePos(e) {
     const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
     return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY
     };
   }
 
   function getTouchPos(e) {
     const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
     return {
-      x: e.touches[0].clientX - rect.left,
-      y: e.touches[0].clientY - rect.top
+      x: (e.touches[0].clientX - rect.left) * scaleX,
+      y: (e.touches[0].clientY - rect.top) * scaleY
     };
   }
 
@@ -914,12 +932,16 @@
   }
 
   function handleTouchStart(e) {
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     startDrawing(e);
   }
 
   function handleTouchMove(e) {
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     draw(e);
   }
 
@@ -928,45 +950,51 @@
   }
 
   function clearSignature() {
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Re-adicionar guia de texto
-    ctx.fillStyle = '#ffcdd2';
-    ctx.font = 'italic 16px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('Assine aqui', canvas.width / 2, canvas.height / 2);
+    clearCanvas();
   }
 
   function isSignatureEmpty() {
-    // Verificar se o canvas está vazio (apenas com o texto guia)
+    // Criar canvas em branco para comparação
     const blankCanvas = document.createElement('canvas');
     blankCanvas.width = canvas.width;
     blankCanvas.height = canvas.height;
     const blankCtx = blankCanvas.getContext('2d');
+    
+    // Preencher com fundo branco
     blankCtx.fillStyle = '#ffffff';
     blankCtx.fillRect(0, 0, blankCanvas.width, blankCanvas.height);
+    
+    // Adicionar o mesmo texto guia
     blankCtx.fillStyle = '#ffcdd2';
-    blankCtx.font = 'italic 16px Arial';
+    blankCtx.font = 'italic 14px Arial';
     blankCtx.textAlign = 'center';
     blankCtx.textBaseline = 'middle';
     blankCtx.fillText('Assine aqui', blankCanvas.width / 2, blankCanvas.height / 2);
     
-    return canvas.toDataURL() === blankCanvas.toDataURL();
+    // Comparar os dados das imagens
+    const currentData = canvas.toDataURL('image/jpeg', 0.3); // JPEG com 30% qualidade
+    const blankData = blankCanvas.toDataURL('image/jpeg', 0.3);
+    
+    return currentData === blankData;
   }
 
-  // ===== FUNÇÕES DE LOGIN =====
+  // Função otimizada para obter assinatura em Base64
+  function getSignatureDataURL() {
+    // Usar JPEG em vez de PNG para reduzir drasticamente o tamanho
+    // Qualidade de 30% é suficiente para assinatura e reduz muito o tamanho
+    return canvas.toDataURL('image/jpeg', 0.3);
+  }
+
+  // ===== FUNÇÕES DE LOGIN SIMPLIFICADO =====
   document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const email = document.getElementById('loginEmail').value.trim();
-    const senha = document.getElementById('loginSenha').value;
     const errorDiv = document.getElementById('loginError');
     const errorText = document.getElementById('errorText');
     
     // Validar e-mail básico
-    if (!email.includes('@')) {
+    if (!email.includes('@') || !email.includes('.')) {
       errorText.textContent = "Por favor, insira um e-mail válido";
       errorDiv.style.display = 'block';
       return;
@@ -975,70 +1003,50 @@
     // Mostrar loading
     const loginBtn = e.target.querySelector('button');
     loginBtn.disabled = true;
-    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Acessando...';
     
-    // Enviar dados para verificação
-    fetch(SCRIPT_URL + "?action=login", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8',
-      },
-      body: JSON.stringify({ email: email, senha: senha })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        // Login bem-sucedido
-        usuarioLogado = {
-          email: email,
-          nome: data.nome || email.split('@')[0]
-        };
-        
-        // Armazenar no sessionStorage (apenas para esta sessão)
-        sessionStorage.setItem('feedback_usuario', JSON.stringify(usuarioLogado));
-        
-        // Mostrar tela principal com animação
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainScreen').style.display = 'block';
-        document.getElementById('loggedUser').textContent = usuarioLogado.nome;
-        
-        // Inicializar assinatura e carregar dados
-        setTimeout(() => {
-          initializeSignature();
-          carregarColaboradores();
-          // Inicializar display da nota
-          updateNotaDisplay(document.getElementById('nota').value);
-        }, 100);
-      } else {
-        // Login falhou
-        errorText.textContent = data.message || "E-mail ou senha inválidos!";
-        errorDiv.style.display = 'block';
-        
-        // Adicionar animação de erro
-        errorDiv.style.animation = 'shake 0.5s';
-        setTimeout(() => {
-          errorDiv.style.animation = '';
-        }, 500);
-      }
-    })
-    .catch(error => {
-      console.error('Erro no login:', error);
-      errorText.textContent = "Erro de conexão. Verifique sua internet e tente novamente.";
-      errorDiv.style.display = 'block';
-    })
-    .finally(() => {
+    // Simular verificação (sem senha)
+    setTimeout(() => {
+      // Login automático com qualquer e-mail válido
+      usuarioLogado = {
+        email: email,
+        nome: email.split('@')[0].replace(/\./g, ' ').replace(/_/g, ' ')
+      };
+      
+      // Capitalizar primeira letra de cada palavra
+      usuarioLogado.nome = usuarioLogado.nome
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      
+      // Armazenar no sessionStorage
+      sessionStorage.setItem('feedback_usuario', JSON.stringify(usuarioLogado));
+      
+      // Mostrar tela principal
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('mainScreen').style.display = 'block';
+      document.getElementById('loggedUser').textContent = usuarioLogado.nome;
+      
+      // Inicializar sistema
+      setTimeout(() => {
+        initializeSignature();
+        carregarColaboradores();
+        updateNotaDisplay(document.getElementById('nota').value);
+      }, 100);
+      
+      // Resetar botão
       loginBtn.disabled = false;
-      loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar no Sistema';
-    });
+      loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Acessar Sistema';
+    }, 800);
   });
 
   // ===== VERIFICAR SE JÁ ESTÁ LOGADO =====
   window.addEventListener('load', function() {
-    // SEMPRE mostrar tela de login ao carregar
+    // Sempre mostrar tela de login
     document.getElementById('loginScreen').style.display = 'block';
     document.getElementById('mainScreen').style.display = 'none';
     
-    // Limpar qualquer sessão anterior
+    // Limpar sessão anterior
     sessionStorage.removeItem('feedback_usuario');
     
     // Focar no campo de email
@@ -1067,8 +1075,6 @@
           select.appendChild(opt);
         });
         select.disabled = false;
-        
-        // Adicionar estilo após carregar
         select.style.background = "white";
         select.style.borderColor = "#e0e0e0";
       })
@@ -1078,138 +1084,171 @@
       });
   }
 
-  // ===== ENVIO DOS DADOS (POST) =====
-  document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+  // ===== LÓGICA PRINCIPAL DE ENVIO OTIMIZADA =====
+  document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
+    // Evitar envio duplicado
+    if (enviando) return;
+    
     if (!usuarioLogado) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Sessão Expirada',
-        text: 'Faça login novamente.',
-        confirmButtonColor: '#e53935'
-      });
-      sessionStorage.removeItem('feedback_usuario');
-      location.reload();
+      mostrarErroSessao();
       return;
     }
     
-    // Verificar se há assinatura
+    // Verificar assinatura
     if (isSignatureEmpty()) {
-      const signatureContainer = document.querySelector('.signature-container');
-      signatureContainer.style.borderColor = '#e53935';
-      signatureContainer.style.background = 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)';
-      signatureContainer.style.animation = 'shake 0.5s';
-      
-      setTimeout(() => {
-        signatureContainer.style.borderColor = '';
-        signatureContainer.style.background = '';
-        signatureContainer.style.animation = '';
-      }, 2000);
-      
-      Swal.fire({
-        icon: 'warning',
-        title: 'Assinatura Requerida',
-        text: 'Por favor, solicite ao colaborador que assine antes de enviar.',
-        confirmButtonColor: '#ff6f00'
-      });
+      mostrarErroAssinatura();
       return;
     }
-
-    const btn = document.getElementById('btnEnviar');
-    const loader = document.getElementById('loader');
     
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-    loader.style.display = "block";
-
-    const formData = {
-      gestor: document.getElementById('gestor').value,
-      colaborador: document.getElementById('colaborador').value,
-      tipo: document.getElementById('tipo').value,
-      nota: document.getElementById('nota').value,
-      mensagem: document.getElementById('mensagem').value,
-      assinatura: canvas.toDataURL('image/png'),
-      usuario: usuarioLogado.email
-    };
-
-    // Enviar com timeout
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Tempo limite excedido. Tente novamente.')), 30000);
-    });
-
-    Promise.race([
-      fetch(SCRIPT_URL, {
+    // Iniciar processo de envio
+    enviando = true;
+    iniciarEnvio();
+    
+    try {
+      // Preparar dados
+      const formData = {
+        gestor: document.getElementById('gestor').value,
+        colaborador: document.getElementById('colaborador').value,
+        tipo: document.getElementById('tipo').value,
+        nota: document.getElementById('nota').value,
+        mensagem: document.getElementById('mensagem').value,
+        assinatura: getSignatureDataURL(), // Usar função otimizada
+        usuario: usuarioLogado.email
+      };
+      
+      // Log para debug (opcional)
+      console.log("Tamanho da assinatura:", formData.assinatura.length, "caracteres");
+      
+      // Enviar para o servidor
+      const response = await fetch(SCRIPT_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8',
-        },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(formData)
-      }),
-      timeoutPromise
-    ])
-    .then(response => {
+      });
+      
       if (!response.ok) {
         throw new Error(`Erro ${response.status}: ${response.statusText}`);
       }
-      return response.json();
-    })
-    .then(data => {
-      if(data.result === "success") {
-        // Feedback bem-sucedido
-        btn.innerHTML = '<i class="fas fa-check"></i> Enviado com Sucesso!';
-        btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
-        
-        // Mostrar mensagem de sucesso
-        Swal.fire({
-          icon: 'success',
-          title: 'Feedback Registrado!',
-          text: 'O feedback foi salvo no sistema com sucesso.',
-          confirmButtonColor: '#4caf50',
-          confirmButtonText: 'OK'
-        });
-        
-        // Limpar formulário após 2 segundos
-        setTimeout(() => {
-          document.getElementById('feedbackForm').reset();
-          clearSignature();
-          updateNotaDisplay(5); // Resetar nota para 5
-          btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Feedback';
-          btn.style.background = '';
-          btn.disabled = false;
-          loader.style.display = "none";
-        }, 2000);
+      
+      const data = await response.json();
+      
+      if (data.result === "success") {
+        // Sucesso
+        sucessoEnvio();
       } else {
         throw new Error(data.error || "Erro desconhecido");
       }
-    })
-    .catch(error => {
-      console.error('Erro ao enviar:', error);
-      
-      // Mostrar mensagem de erro
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao Enviar',
-        html: `<div style="text-align: left;">
-                <p>${error.message || 'Ocorreu um erro ao enviar o feedback.'}</p>
-                <p style="font-size: 12px; color: #666; margin-top: 10px;">
-                  <i class="fas fa-lightbulb"></i> Dica: Verifique sua conexão e tente novamente.
-                </p>
-              </div>`,
-        confirmButtonColor: '#e53935',
-        confirmButtonText: 'Entendi'
-      });
-    })
-    .finally(() => {
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Feedback';
-        loader.style.display = "none";
-      }, 3000);
-    });
+    } catch (error) {
+      // Erro no envio
+      erroEnvio(error);
+    } finally {
+      enviando = false;
+    }
   });
 
-  // Adicionar SweetAlert2 para alertas mais bonitos
+  // ===== FUNÇÕES AUXILIARES DO ENVIO =====
+  function iniciarEnvio() {
+    const btn = document.getElementById('btnEnviar');
+    const loader = document.getElementById('loader');
+    
+    // Desabilitar botão e mostrar apenas o loader
+    btn.disabled = true;
+    loader.style.display = "block";
+  }
+
+  function finalizarEnvio() {
+    const btn = document.getElementById('btnEnviar');
+    const loader = document.getElementById('loader');
+    
+    // Esconder loader e reabilitar botão
+    loader.style.display = "none";
+    btn.disabled = false;
+  }
+
+  function sucessoEnvio() {
+    const btn = document.getElementById('btnEnviar');
+    
+    // Atualizar botão com sucesso
+    btn.innerHTML = '<i class="fas fa-check"></i> Enviado com Sucesso!';
+    btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
+    
+    // Mostrar mensagem
+    Swal.fire({
+      icon: 'success',
+      title: 'Feedback Registrado!',
+      text: 'O feedback foi salvo no sistema com sucesso.',
+      confirmButtonColor: '#4caf50',
+      confirmButtonText: 'OK'
+    });
+    
+    // Limpar formulário após 2 segundos
+    setTimeout(() => {
+      document.getElementById('feedbackForm').reset();
+      clearSignature();
+      updateNotaDisplay(5);
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Feedback';
+      btn.style.background = '';
+      finalizarEnvio();
+    }, 2000);
+  }
+
+  function erroEnvio(error) {
+    console.error('Erro ao enviar:', error);
+    
+    // Mostrar mensagem de erro
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro ao Enviar',
+      html: `<div style="text-align: left;">
+              <p>${error.message || 'Ocorreu um erro ao enviar o feedback.'}</p>
+              <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                <i class="fas fa-lightbulb"></i> Dica: Verifique sua conexão e tente novamente.
+              </p>
+            </div>`,
+      confirmButtonColor: '#e53935',
+      confirmButtonText: 'Entendi'
+    });
+    
+    // Restaurar interface
+    finalizarEnvio();
+  }
+
+  function mostrarErroSessao() {
+    Swal.fire({
+      icon: 'error',
+      title: 'Sessão Expirada',
+      text: 'Faça login novamente.',
+      confirmButtonColor: '#e53935'
+    });
+    sessionStorage.removeItem('feedback_usuario');
+    location.reload();
+  }
+
+  function mostrarErroAssinatura() {
+    const signatureContainer = document.querySelector('.signature-container');
+    signatureContainer.style.borderColor = '#e53935';
+    signatureContainer.style.background = 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)';
+    signatureContainer.style.animation = 'shake 0.5s';
+    
+    setTimeout(() => {
+      signatureContainer.style.borderColor = '';
+      signatureContainer.style.background = '';
+      signatureContainer.style.animation = '';
+    }, 2000);
+    
+    Swal.fire({
+      icon: 'warning',
+      title: 'Assinatura Requerida',
+      text: 'Por favor, solicite ao colaborador que assine antes de enviar.',
+      confirmButtonColor: '#ff6f00'
+    });
+  }
+
+  // ===== OUTRAS FUNÇÕES =====
+  
+  // SweetAlert2 simplificado
   const Swal = {
     fire: function(options) {
       if (typeof swal === 'undefined') {
@@ -1220,11 +1259,10 @@
     }
   };
 
-  // Redimensionar canvas quando a janela for redimensionada
+  // Redimensionar canvas
   window.addEventListener('resize', function() {
-    if (canvas) {
-      resizeCanvas();
-    }
+    // Não redimensionamos mais o canvas, mas mantemos a função
+    // para evitar erros se houver outras referências
   });
 
   // Adicionar animação de shake
@@ -1238,14 +1276,14 @@
   `;
   document.head.appendChild(style);
 
-  // Adicionar funcionalidade de limpar assinatura com ESC
+  // Limpar assinatura com ESC
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       clearSignature();
     }
   });
 
-  // Adicionar placeholder dinâmico para o campo de gestor
+  // Placeholder dinâmico para gestor
   document.getElementById('gestor').addEventListener('focus', function() {
     if (usuarioLogado && !this.value) {
       this.placeholder = `Ex: ${usuarioLogado.nome} (se for você)`;
