@@ -709,6 +709,18 @@
               <option value="OB Falso">❌ OB Falso</option>
             </select>
           </div>
+
+
+
+          <div class="input-group">
+  <label for="enderecoTratado">Endereço tratado?</label>
+  <select id="enderecoTratado" required>
+    <option value="">Selecione uma opção...</option>
+    <option value="Concluido">✅ Concluido</option>
+    <option value="Pendente">⏳ Pendente</option>
+    <option value="NA">⚪ NA (Não se aplica)</option>
+  </select>
+</div>
           
           <div class="nota-container">
             <label>Nota do Feedback</label>
@@ -783,7 +795,7 @@
 
 <script>
   // URL do Google Apps Script
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDZvje-GFp51Ihe-QuLKwFlrGGIo01mtT0nZmEREQnZGbavHAndWG51FH0_mxP_C5OQw/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxaVXNs9VunI7K5IIrCpr7MuRaUxYR3hJhOR8ZocXuye2L1cltAvxSoTdb5Qf1_uv7FXA/exec";
   
   // Estado do sistema
   let usuarioLogado = null;
@@ -1112,6 +1124,7 @@
         gestor: document.getElementById('gestor').value,
         colaborador: document.getElementById('colaborador').value,
         tipo: document.getElementById('tipo').value,
+        enderecoTratado: document.getElementById('enderecoTratado').value, // <-- ADICIONE ESTA LINHA
         nota: document.getElementById('nota').value,
         mensagem: document.getElementById('mensagem').value,
         assinatura: getSignatureDataURL(), // Usar função otimizada
