@@ -711,8 +711,12 @@
           </div>
 
 
+<div class="input-group">
+  <label for="endereco">Endereço</label>
+  <input type="text" id="endereco" placeholder="Digite o endereço" required>
+</div>
 
-          <div class="input-group">
+<div class="input-group">
   <label for="enderecoTratado">Endereço tratado?</label>
   <select id="enderecoTratado" required>
     <option value="">Selecione uma opção...</option>
@@ -795,7 +799,7 @@
 
 <script>
   // URL do Google Apps Script
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxaVXNs9VunI7K5IIrCpr7MuRaUxYR3hJhOR8ZocXuye2L1cltAvxSoTdb5Qf1_uv7FXA/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlmdvYF7F24fA-z7Sl134bkCdSQYZECAyQxaf3iVxYjNDeKk6kSjSlRMgsBsmlLdO4Ow/exec";
   
   // Estado do sistema
   let usuarioLogado = null;
@@ -1124,6 +1128,7 @@
         gestor: document.getElementById('gestor').value,
         colaborador: document.getElementById('colaborador').value,
         tipo: document.getElementById('tipo').value,
+        endereco: document.getElementById('endereco').value, // <-- ADICIONE ESTA LINHA
         enderecoTratado: document.getElementById('enderecoTratado').value, // <-- ADICIONE ESTA LINHA
         nota: document.getElementById('nota').value,
         mensagem: document.getElementById('mensagem').value,
