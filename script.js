@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlz3x1dQNVvPG59whGIcyZsSuiK2a_Khu4fgevt2lvX5XdLsfHpPQrwjYM_7t7Db7Cww/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwT9wzPBiFtazUdYXz-wILwx8KADpXQ9jMpP0ooAKkudvdvX_l1V6_VBVr83YYNKlnkNw/exec";
   
 // Estado do sistema
 let usuarioLogado = null;
@@ -19,9 +19,7 @@ const LINE_WIDTH = 2;
 
 // ===== FUNÇÕES DE LOGIN SEGURO =====
 
-/**
- * Mostra o estado de carregamento no login
- */
+
 /**
  * Mostra o estado de carregamento no login
  * (Versão corrigida: Apenas no botão)
@@ -1313,11 +1311,33 @@ function renderizarGraficos() {
     notasPorMes[mesAno].count += 1;
   });
   
+  // --- ALTERAÇÃO AQUI: LÓGICA DE CORES OTIMIZADA ---
+  
+  // 1. Paleta extra de cores para evitar duplicatas (30 cores distintas)
+  const paletaExtra = [
+    '#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6', 
+    '#dd4477', '#66aa00', '#b82e2e', '#316395', '#994499', '#22aa99', 
+    '#aaaa11', '#6633cc', '#e67300', '#8b0707', '#651067', '#329262', 
+    '#5574a6', '#3b3eac', '#b77322', '#16d620', '#b91383', '#f4359e', 
+    '#9c5935', '#a9c413', '#2a778d', '#668d1c', '#bea413', '#0c5922'
+  ];
+
   // Gráfico 1: Distribuição por Tipo de Feedback
   const tiposLabels = Object.keys(tipoCounts);
   const tiposData = Object.values(tipoCounts);
-  const tiposCores = tiposLabels.map(tipo => getCorPorTipo(tipo));
   
+  // Gera as cores: Se tiver cor fixa (ex: Elogio), usa ela. Se não, pega da paleta extra sequencialmente.
+  const tiposCores = tiposLabels.map((tipo, index) => {
+      const corPadrao = getCorPorTipo(tipo);
+      // Se a função retornou o cinza padrão (#757575), usamos nossa paleta colorida
+      if (corPadrao === '#757575') {
+          return paletaExtra[index % paletaExtra.length];
+      }
+      return corPadrao;
+  });
+  
+  // ---------------------------------------------------
+
   chartsGrid.innerHTML += `
     <div class="chart-container">
       <div class="chart-header">
@@ -1384,14 +1404,14 @@ function renderizarGraficos() {
   
   // Renderizar gráficos após o DOM ser atualizado
   setTimeout(() => {
-    // Gráfico de pizza - Tipos
+    // Gráfico de pizza - Tipos (AGORA COM AS NOVAS CORES)
     new Chart(document.getElementById('chartTipos'), {
       type: 'pie',
       data: {
         labels: tiposLabels,
         datasets: [{
           data: tiposData,
-          backgroundColor: tiposCores,
+          backgroundColor: tiposCores, // Usa a nova lista de cores
           borderWidth: 1,
           borderColor: '#ffffff'
         }]
@@ -1562,6 +1582,31 @@ async function exportarFeedbacksPDF() {
     return;
   }
   
+  // Perguntar ao usuário o que exportar
+  const { value: exportType } = await Swal.fire({
+    title: 'Exportar Feedbacks',
+    text: 'Exportar página atual ou todos os feedbacks?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Exportar',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#2196f3',
+    cancelButtonColor: '#6c757d',
+    input: 'radio',
+    inputOptions: {
+      'current': 'Página atual',
+      'all': 'Todos os feedbacks'
+    },
+    inputValue: 'current',
+    inputValidator: (value) => {
+      if (!value) {
+        return 'Você precisa escolher uma opção!';
+      }
+    }
+  });
+  
+  if (!exportType) return;
+  
   const loadingSwal = Swal.fire({
     title: 'Gerando PDF...',
     html: '<div class="loader" style="margin: 20px 0;"><i class="fas fa-circle-notch fa-spin"></i> Preparando documento...</div>',
@@ -1581,6 +1626,24 @@ async function exportarFeedbacksPDF() {
     const margin = 15;
     const contentWidth = pageWidth - (margin * 2);
     
+    // Determinar quais feedbacks exportar
+    let feedbacksToExport;
+    let exportInfo;
+    let startIndex;
+    let endIndex;
+    
+    if (exportType === 'current') {
+      // Pega apenas os feedbacks da página atual
+      startIndex = (currentFeedbacksPage - 1) * feedbacksPerPage;
+      endIndex = Math.min(startIndex + feedbacksPerPage, meusFeedbacks.length);
+      feedbacksToExport = meusFeedbacks.slice(startIndex, endIndex);
+      exportInfo = `Página ${currentFeedbacksPage} (${feedbacksToExport.length} feedbacks)`;
+    } else {
+      // Pega todos os feedbacks
+      feedbacksToExport = meusFeedbacks;
+      exportInfo = `Todos os feedbacks (${feedbacksToExport.length} no total)`;
+    }
+    
     // Cabeçalho
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
@@ -1593,7 +1656,12 @@ async function exportarFeedbacksPDF() {
     doc.setTextColor(100, 100, 100);
     doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, margin, margin + 8);
     doc.text(`Usuário: ${usuarioLogado.nome}`, margin, margin + 13);
-    doc.text(`Total de feedbacks: ${meusFeedbacks.length}`, pageWidth - margin, margin + 8, { align: 'right' });
+    doc.text(`${exportInfo}`, pageWidth - margin, margin + 8, { align: 'right' });
+    
+    // Adicionar informações específicas se for página atual
+    if (exportType === 'current') {
+      doc.text(`Posição: ${startIndex + 1} a ${endIndex} de ${meusFeedbacks.length}`, pageWidth - margin, margin + 13, { align: 'right' });
+    }
     
     // Linha divisória
     doc.setDrawColor(229, 57, 53);
@@ -1602,8 +1670,20 @@ async function exportarFeedbacksPDF() {
     
     let yPosition = margin + 25;
     
+    // Verificar se há feedbacks para exportar
+    if (feedbacksToExport.length === 0) {
+      loadingSwal.close();
+      Swal.fire({
+        icon: 'warning',
+        title: 'Nenhum Feedback',
+        text: 'Não há feedbacks para exportar na seleção escolhida.',
+        confirmButtonColor: '#ff6f00'
+      });
+      return;
+    }
+    
     // Adicionar cada feedback
-    meusFeedbacks.forEach((feedback, index) => {
+    feedbacksToExport.forEach((feedback, index) => {
       if (yPosition > doc.internal.pageSize.height - 30) {
         doc.addPage();
         yPosition = margin;
@@ -1612,11 +1692,19 @@ async function exportarFeedbacksPDF() {
       const dataFormatada = new Date(feedback.data).toLocaleDateString('pt-BR');
       const horaFormatada = new Date(feedback.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
       
+      // Determinar número do feedback
+      let feedbackNumber;
+      if (exportType === 'current') {
+        feedbackNumber = startIndex + index + 1;
+      } else {
+        feedbackNumber = index + 1;
+      }
+      
       // Título do feedback
       doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(33, 33, 33);
-      doc.text(`Feedback #${index + 1}`, margin, yPosition);
+      doc.text(`Feedback #${feedbackNumber}`, margin, yPosition);
       
       // Data e hora
       doc.setFontSize(8);
@@ -1673,9 +1761,6 @@ async function exportarFeedbacksPDF() {
       
       // Descrição (limitada)
       let descricao = feedback.mensagem || 'Sem descrição';
-      if (descricao.length > 80) {
-        descricao = descricao.substring(0, 80) + '...';
-      }
       
       doc.setFontSize(8);
       doc.setFont('helvetica', 'italic');
@@ -1691,6 +1776,40 @@ async function exportarFeedbacksPDF() {
       doc.setLineWidth(0.2);
       doc.line(margin, yPosition - 5, pageWidth - margin, yPosition - 5);
     });
+    
+    // Adicionar estatísticas se tiver espaço
+    if (yPosition < doc.internal.pageSize.height - 40) {
+      yPosition += 10;
+      
+      // Linha divisória para estatísticas
+      doc.setDrawColor(229, 57, 53);
+      doc.setLineWidth(0.3);
+      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 10;
+      
+      // Estatísticas
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(33, 33, 33);
+      doc.text('ESTATÍSTICAS', margin, yPosition);
+      
+      yPosition += 7;
+      
+      // Calcular estatísticas
+      const notas = feedbacksToExport.map(f => parseInt(f.nota));
+      const media = notas.reduce((a, b) => a + b, 0) / notas.length;
+      const maxNota = Math.max(...notas);
+      const minNota = Math.min(...notas);
+      
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`• Média de notas: ${media.toFixed(1)}/10`, margin, yPosition);
+      doc.text(`• Nota mais alta: ${maxNota}/10`, margin + contentWidth / 2, yPosition);
+      yPosition += 5;
+      
+      doc.text(`• Nota mais baixa: ${minNota}/10`, margin, yPosition);
+      doc.text(`• Feedbacks exportados: ${feedbacksToExport.length}`, margin + contentWidth / 2, yPosition);
+    }
     
     // Rodapé
     const totalPages = doc.internal.getNumberOfPages();
@@ -1708,7 +1827,17 @@ async function exportarFeedbacksPDF() {
     
     loadingSwal.close();
     
-    const fileName = `feedbacks_${usuarioLogado.nome.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+    // Nome do arquivo
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    let fileName;
+    
+    if (exportType === 'current') {
+      fileName = `feedbacks_pagina_${currentFeedbacksPage}_${usuarioLogado.nome.replace(/\s+/g, '_')}_${dateStr}.pdf`;
+    } else {
+      fileName = `feedbacks_todos_${usuarioLogado.nome.replace(/\s+/g, '_')}_${dateStr}.pdf`;
+    }
+    
     doc.save(fileName);
     
     Swal.fire({
@@ -1716,7 +1845,9 @@ async function exportarFeedbacksPDF() {
       title: 'PDF Gerado!',
       html: `<div style="text-align: left; padding: 10px;">
               <p><strong>Arquivo:</strong> ${fileName}</p>
-              <p><strong>Total de feedbacks:</strong> ${meusFeedbacks.length}</p>
+              <p><strong>Feedbacks exportados:</strong> ${feedbacksToExport.length}</p>
+              <p><strong>Tipo de exportação:</strong> ${exportType === 'current' ? 'Página atual' : 'Todos os feedbacks'}</p>
+              ${exportType === 'current' ? `<p><strong>Página:</strong> ${currentFeedbacksPage}</p>` : ''}
               <p style="font-size: 12px; color: #666; margin-top: 10px;">
                 <i class="fas fa-info-circle"></i> O arquivo foi baixado automaticamente.
               </p>
