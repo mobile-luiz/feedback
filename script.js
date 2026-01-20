@@ -22,17 +22,24 @@ const LINE_WIDTH = 2;
 /**
  * Mostra o estado de carregamento no login
  */
+/**
+ * Mostra o estado de carregamento no login
+ * (Versão corrigida: Apenas no botão)
+ */
 function showLoginLoading() {
-  const loading = document.getElementById('loginLoading');
+  // const loading = document.getElementById('loginLoading'); // Comentado para não duplicar
   const error = document.getElementById('loginError');
   const success = document.getElementById('loginSuccess');
   const btn = document.querySelector('#loginForm button[type="submit"]');
   
-  if (loading) loading.style.display = 'block';
+  // if (loading) loading.style.display = 'block'; // Comentado
   if (error) error.style.display = 'none';
   if (success) success.style.display = 'none';
+  
   if (btn) {
     btn.disabled = true;
+    // Salva o texto original se quiser restaurar exatamente igual depois, 
+    // ou apenas define o HTML de loading
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
   }
 }
@@ -44,7 +51,7 @@ function hideLoginLoading() {
   const loading = document.getElementById('loginLoading');
   const btn = document.querySelector('#loginForm button[type="submit"]');
   
-  if (loading) loading.style.display = 'none';
+  if (loading) loading.style.display = 'none'; // Garante que fique oculta
   if (btn) {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Acessar Sistema';
@@ -162,8 +169,9 @@ async function processarLogin(email) {
     // Mostrar mensagem de sucesso
     showLoginSuccess();
     
-    // Salvar no sessionStorage
-    sessionStorage.setItem('feedback_usuario', JSON.stringify(usuarioLogado));
+    // --- ALTERAÇÃO: COMENTADO PARA NÃO SALVAR SESSÃO ---
+    // sessionStorage.setItem('feedback_usuario', JSON.stringify(usuarioLogado));
+    // ---------------------------------------------------
     
     // Aguardar um pouco para mostrar a mensagem de sucesso
     setTimeout(() => {
@@ -1313,7 +1321,7 @@ function renderizarGraficos() {
   chartsGrid.innerHTML += `
     <div class="chart-container">
       <div class="chart-header">
-        <h4><i class="fas fa-chart-pie"></i> Distribuição por Tipo</h4>
+        <h4><i class="fas fa-chart-pie"></i> Tipo de Feedback</h4>
       </div>
       <div class="chart-wrapper">
         <canvas id="chartTipos"></canvas>
@@ -1345,7 +1353,7 @@ function renderizarGraficos() {
   chartsGrid.innerHTML += `
     <div class="chart-container">
       <div class="chart-header">
-        <h4><i class="fas fa-check-circle"></i> Status dos Endereços</h4>
+        <h4><i class="fas fa-check-circle"></i> Endereço Tratado ?</h4>
       </div>
       <div class="chart-wrapper">
         <canvas id="chartStatus"></canvas>
