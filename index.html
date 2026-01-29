@@ -8,369 +8,59 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    /* Estilos específicos para a tela de login profissional */
-    :root {
-      --primary-blue: #1a73e8;
-      --dark-blue: #0d47a1;
-      --light-blue: #4285f4;
-      --accent-color: #34a853;
-      --gray-dark: #333;
-      --gray-medium: #666;
-      --gray-light: #f5f5f5;
-      --white: #fff;
-      --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-      --shadow-hover: 0 15px 50px rgba(0, 0, 0, 0.15);
-      --border-radius: 16px;
-    }
-
-    body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-    }
-
-    .login-container {
-      background: var(--white);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      width: 100%;
-      max-width: 480px;
-      overflow: hidden;
-      position: relative;
-      transition: all 0.3s ease;
-    }
-
-    .login-container:hover {
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-5px);
-    }
-
-    .login-header {
-      background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
-      padding: 40px 30px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .login-header::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-      transform: rotate(45deg);
-      animation: shine 3s infinite linear;
-    }
-
-    @keyframes shine {
-      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-    }
-
-    .login-logo {
-      position: relative;
-      z-index: 1;
-    }
-
-    .logo-icon {
-      background: var(--white);
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .logo-icon i {
-      font-size: 36px;
-      background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .login-logo h2 {
-      color: var(--white);
-      font-size: 24px;
-      margin-bottom: 10px;
-      font-weight: 600;
-      line-height: 1.3;
-    }
-
-    .login-subtitle {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 14px;
-      letter-spacing: 0.5px;
-    }
-
-    #loginForm {
-      padding: 40px;
-      background: var(--white);
-    }
-
-    .input-group {
-      margin-bottom: 24px;
-    }
-
-    .input-group label {
-      display: block;
-      margin-bottom: 10px;
-      color: var(--gray-dark);
-      font-weight: 600;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .input-group input {
-      width: 100%;
-      padding: 16px 20px;
-      border: 2px solid #e1e5e9;
-      border-radius: 12px;
-      font-size: 16px;
-      transition: all 0.3s;
-      background: var(--gray-light);
-      color: var(--gray-dark);
-    }
-
-    .input-group input:focus {
-      outline: none;
-      border-color: var(--primary-blue);
-      background: var(--white);
-      box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
-    }
-
-    .input-group input::placeholder {
-      color: #a0aec0;
-    }
-
-    .login-info {
-      background: linear-gradient(135deg, #f6f9ff, #edf2ff);
-      border-radius: 12px;
-      padding: 16px;
-      margin: 20px 0;
-      border-left: 4px solid var(--primary-blue);
-    }
-
-    .login-info p {
-      color: var(--primary-blue);
-      font-size: 13px;
-      margin: 0;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    .login-info i {
-      color: var(--primary-blue);
-      margin-right: 8px;
-    }
-
-    button[type="submit"] {
-      background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
-      color: var(--white);
-      border: none;
-      padding: 18px 30px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      width: 100%;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-top: 10px;
-    }
-
-    button[type="submit"]:hover {
-      background: linear-gradient(135deg, var(--dark-blue), var(--primary-blue));
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(26, 115, 232, 0.3);
-    }
-
-    button[type="submit"]:active {
-      transform: translateY(0);
-    }
-
-    .login-messages {
-      margin-top: 20px;
-    }
-
-    .login-error,
-    .login-success,
-    .login-loading {
-      padding: 16px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      display: none;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
-      animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .login-error {
-      background: linear-gradient(135deg, #fee, #fdd);
-      border-left: 4px solid #e53935;
-      color: #c62828;
-    }
-
-    .login-success {
-      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-      border-left: 4px solid var(--accent-color);
-      color: #2e7d32;
-    }
-
-    .login-loading {
-      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-      border-left: 4px solid var(--primary-blue);
-      color: var(--primary-blue);
-    }
-
-    .form-footer {
-      text-align: center;
-      padding: 20px;
-      background: #f8f9fa;
-      border-top: 1px solid #e9ecef;
-      color: var(--gray-medium);
-      font-size: 12px;
-    }
-
-    .form-footer p {
-      margin: 0;
-      font-weight: 500;
-    }
-
-    /* Responsividade */
-    @media (max-width: 768px) {
-      .login-container {
-        max-width: 90%;
-      }
-      
-      #loginForm {
-        padding: 30px 20px;
-      }
-      
-      .login-header {
-        padding: 30px 20px;
-      }
-      
-      .login-logo h2 {
-        font-size: 20px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .login-container {
-        max-width: 95%;
-      }
-      
-      #loginForm {
-        padding: 25px 15px;
-      }
-      
-      .login-header {
-        padding: 25px 15px;
-      }
-    }
-
-    /* Efeitos de animação */
-    .login-container {
-      animation: fadeIn 0.5s ease;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
 </head>
 <body>
 
-<!-- Tela de Login Profissional -->
+<!-- Tela de Login -->
 <div class="login-container" id="loginScreen">
-  <div class="login-header">
-    <div class="login-logo">
-      <div class="logo-icon">
-        <i class="fas fa-comments"></i>
-      </div>
-      <div>
-        <h2>Sistema de Feedback<br>Diffs e Ocorrências da Qualidade</h2>
-        <p class="login-subtitle">Acesso Restrito - Credenciais Corporativas</p>
-      </div>
+  <div class="login-logo">
+    <div class="logo-icon">
+      <i class="fas fa-comment-dots"></i>
+    </div>
+    <div>
+      <h2>Registro de Feedback Diffs e Ocorrencias da qualidade</h2>
+      <p class="login-subtitle">  </p>
     </div>
   </div>
   
   <form id="loginForm">
     <div class="input-group">
-      <label for="loginEmail">E-mail Corporativo</label>
-      <input type="email" id="loginEmail" placeholder="seu.email@empresa.com" required>
+      <label for="loginEmail"><i class="fas fa-envelope"></i> E-mail</label>
+      <div class="input-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <input type="email" id="loginEmail" placeholder="email@empresa.com" required>
     </div>
     
     <div class="login-info">
-      <p>
-        <i class="fas fa-shield-alt"></i>
-        Utilize seu e-mail corporativo cadastrado no sistema
+      <p style="text-align: center; color: var(--shoppe-gray); font-size: 13px; margin: 15px 0 25px;">
+        <i class="fas fa-info-circle"></i> Digite seu e-mail corporativo para acessar o sistema
       </p>
     </div>
     
     <button type="submit">
-      <i class="fas fa-lock"></i>
+      <i class="fas fa-sign-in-alt"></i>
       Acessar Sistema
     </button>
     
-    <div class="login-messages">
-      <div class="login-error" id="loginError">
-        <i class="fas fa-exclamation-circle"></i>
-        <span id="errorText">E-mail não autorizado. Verifique suas credenciais.</span>
-      </div>
-      
-      <div class="login-success" id="loginSuccess">
-        <i class="fas fa-check-circle"></i>
-        <span>Autenticação realizada com sucesso!</span>
-      </div>
-      
-      <div class="login-loading" id="loginLoading">
-        <i class="fas fa-circle-notch fa-spin"></i>
-        <span>Validando credenciais...</span>
-      </div>
+    <div class="login-error" id="loginError">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="errorText">E-mail inválido!</span>
+    </div>
+    
+    <div class="login-success" id="loginSuccess">
+      <i class="fas fa-check-circle"></i>
+      <span>Login autorizado! Redirecionando...</span>
+    </div>
+    
+    <div class="login-loading" id="loginLoading">
+      <i class="fas fa-circle-notch fa-spin"></i>
+      <span>Verificando credenciais...</span>
     </div>
   </form>
   
   <div class="form-footer">
-    <p>&copy; 2024 Sistema de Feedback - Todos os direitos reservados</p>
-    <p style="margin-top: 5px; font-size: 11px; opacity: 0.7;">v2.1.0</p>
+    <p>Todos os direitos reservados.</p>
   </div>
 </div>
 
@@ -583,10 +273,12 @@
               </button>
             </div>
             
-            <!-- LOADER -->
-            <div class="loader" id="loader">
-              <i class="fas fa-circle-notch"></i>
-              Enviando feedback para o sistema...
+            <!-- LOADER (AGORA SÓ UM) -->
+            <div class="form-loader" id="formLoader" style="display: none;">
+              <div class="loader-content">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <span>Enviando feedback para o sistema...</span>
+              </div>
             </div>
           </form>
           
@@ -764,6 +456,7 @@
           <div class="data-value" id="confirmDataHora"></div>
         </div>
         
+        <!-- CAMPO CAD -->
         <div class="data-item">
           <label>CAD</label>
           <div class="data-value" id="confirmCAD"></div>
@@ -838,5 +531,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="script.js"></script>
+
+<style>
+  /* Estilo para o loader do formulário */
+  .form-loader {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 25px;
+    margin-top: 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+  }
+  
+  .loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .loader-content i {
+    font-size: 32px;
+    color: #4caf50;
+  }
+  
+  .loader-content span {
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+  }
+</style>
+
 </body>
 </html>
