@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwT9wzPBiFtazUdYXz-wILwx8KADpXQ9jMpP0ooAKkudvdvX_l1V6_VBVr83YYNKlnkNw/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHjliamfyBfksrn2GjCR71o5Y9-gkHvJ3xqXMmSunRDtmbwcx8wbgJyaDY2AlgUsqz-Q/exec";
   
 // Estado do sistema
 let usuarioLogado = null;
@@ -19,25 +19,19 @@ const LINE_WIDTH = 2;
 
 // ===== FUNÇÕES DE LOGIN SEGURO =====
 
-
 /**
  * Mostra o estado de carregamento no login
- * (Versão corrigida: Apenas no botão)
  */
 function showLoginLoading() {
-  // const loading = document.getElementById('loginLoading'); // Comentado para não duplicar
   const error = document.getElementById('loginError');
   const success = document.getElementById('loginSuccess');
   const btn = document.querySelector('#loginForm button[type="submit"]');
   
-  // if (loading) loading.style.display = 'block'; // Comentado
   if (error) error.style.display = 'none';
   if (success) success.style.display = 'none';
   
   if (btn) {
     btn.disabled = true;
-    // Salva o texto original se quiser restaurar exatamente igual depois, 
-    // ou apenas define o HTML de loading
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
   }
 }
@@ -49,7 +43,7 @@ function hideLoginLoading() {
   const loading = document.getElementById('loginLoading');
   const btn = document.querySelector('#loginForm button[type="submit"]');
   
-  if (loading) loading.style.display = 'none'; // Garante que fique oculta
+  if (loading) loading.style.display = 'none';
   if (btn) {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Acessar Sistema';
@@ -97,9 +91,6 @@ function formatarNomeUsuario(email) {
 }
 
 /**
- * Faz login verificando se o email tem um domínio autorizado
- */
-/**
  * Faz login verificando REALMENTE no Google Sheets (Aba CADASTRO)
  */
 async function fazerLogin(email) {
@@ -113,7 +104,6 @@ async function fazerLogin(email) {
     }
 
     // PREPARAÇÃO: Cria os dados para enviar ao GS
-    // Isso vai ativar o "if (data.action === 'login')" no seu doPost
     const payload = {
       action: 'login',
       email: email.trim()
@@ -133,7 +123,7 @@ async function fazerLogin(email) {
     const resultado = await response.json();
     
     hideLoginLoading();
-    return resultado; // Retorna exatamente o que o GS respondeu (success: true/false)
+    return resultado;
 
   } catch (error) {
     console.error('Erro no login:', error);
@@ -166,10 +156,6 @@ async function processarLogin(email) {
     
     // Mostrar mensagem de sucesso
     showLoginSuccess();
-    
-    // --- ALTERAÇÃO: COMENTADO PARA NÃO SALVAR SESSÃO ---
-    // sessionStorage.setItem('feedback_usuario', JSON.stringify(usuarioLogado));
-    // ---------------------------------------------------
     
     // Aguardar um pouco para mostrar a mensagem de sucesso
     setTimeout(() => {
@@ -403,15 +389,21 @@ function updateNotaDisplay(valor) {
   }
   
   notaValue.style.background = cor;
-  notaIndicator.style.background = 'var(--shoppe-orange)';
-  notaTexto.textContent = texto;
   
-  if (valor <= 3) {
-    notaIndicator.style.background = 'var(--shoppe-red)';
-  } else if (valor <= 7) {
-    notaIndicator.style.background = 'var(--shoppe-orange)';
-  } else {
-    notaIndicator.style.background = 'var(--shoppe-yellow)';
+  // Atualizar indicador se existir
+  if (notaIndicator) {
+    if (valor <= 3) {
+      notaIndicator.style.background = 'var(--shoppe-red)';
+    } else if (valor <= 7) {
+      notaIndicator.style.background = 'var(--shoppe-orange)';
+    } else {
+      notaIndicator.style.background = 'var(--shoppe-yellow)';
+    }
+  }
+  
+  // Atualizar texto se existir
+  if (notaTexto) {
+    notaTexto.textContent = texto;
   }
 }
 
@@ -556,6 +548,7 @@ function preencherModalConfirmacao() {
   });
   
   document.getElementById('confirmDataHora').textContent = dataFormatada;
+  document.getElementById('confirmCAD').textContent = document.getElementById('cad').value;
   document.getElementById('confirmGestor').textContent = document.getElementById('gestor').value || "Não informado";
   document.getElementById('confirmColaborador').textContent = document.getElementById('colaborador').value || "Não selecionado";
   document.getElementById('confirmTipo').textContent = document.getElementById('tipo').value || "Não selecionado";
@@ -650,7 +643,7 @@ document.getElementById('feedbackForm').addEventListener('submit', function(e) {
 document.getElementById('btnCancelar').addEventListener('click', function() {
   esconderModal();
   setTimeout(() => {
-    document.getElementById('gestor').focus();
+    document.getElementById('cad').focus();
   }, 300);
 });
 
@@ -680,6 +673,7 @@ async function enviarFeedback() {
   
   try {
     const formData = {
+      cad: document.getElementById('cad').value,
       gestor: document.getElementById('gestor').value,
       colaborador: document.getElementById('colaborador').value,
       tipo: document.getElementById('tipo').value,
@@ -721,15 +715,17 @@ function iniciarEnvio() {
   const loader = document.getElementById('loader');
   
   btn.disabled = true;
-  loader.style.display = "block";
+  if (loader) loader.style.display = "block";
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 }
 
 function finalizarEnvio() {
   const btn = document.getElementById('btnEnviar');
   const loader = document.getElementById('loader');
   
-  loader.style.display = "none";
+  if (loader) loader.style.display = "none";
   btn.disabled = false;
+  btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar';
 }
 
 function sucessoEnvio() {
@@ -748,7 +744,7 @@ function sucessoEnvio() {
   
   setTimeout(() => {
     limparFormulario();
-    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Feedback';
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar';
     btn.style.background = '';
     finalizarEnvio();
   }, 2000);
@@ -868,7 +864,7 @@ async function carregarMeusFeedbacks() {
   
   feedbacksTableBody.innerHTML = `
     <tr>
-      <td colspan="6" style="text-align: center; padding: 30px;">
+      <td colspan="7" style="text-align: center; padding: 30px;">
         <div class="loader" style="display: block;">
           <i class="fas fa-circle-notch"></i>
           Carregando seus feedbacks...
@@ -932,6 +928,11 @@ function renderizarFeedbacksMobile() {
         </div>
         
         <div class="feedback-info-grid">
+          <div class="info-item">
+            <div class="info-label">CAD</div>
+            <div class="info-value">${feedback.cad || 'N/A'}</div>
+          </div>
+          
           <div class="info-item">
             <div class="info-label">Colaborador</div>
             <div class="info-value">${colaboradorNome}</div>
@@ -1010,6 +1011,7 @@ function renderizarFeedbacksDesktop() {
           <div style="font-weight: 500;">${dataFormatada}</div>
           <div style="font-size: 12px; color: var(--text-light);">${horaFormatada}</div>
         </td>
+        <td>${feedback.cad || 'N/A'}</td>
         <td>${colaboradorNome}</td>
         <td>
           <span class="feedback-badge" style="background: ${getCorPorTipo(feedback.tipo)};">
@@ -1052,7 +1054,7 @@ function mostrarFeedbacksVazios() {
   
   feedbacksTableBody.innerHTML = `
     <tr>
-      <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-light);">
+      <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-light);">
         <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px; color: #e0e0e0; display: block;"></i>
         <h4 style="margin-bottom: 10px; color: var(--text-light);">Nenhum feedback encontrado</h4>
         <p style="font-size: 14px;">Você ainda não registrou nenhum feedback no sistema.</p>
@@ -1081,7 +1083,7 @@ function mostrarErroFeedbacks(error) {
   
   feedbacksTableBody.innerHTML = `
     <tr>
-      <td colspan="6" style="text-align: center; padding: 40px; color: var(--shoppe-red);">
+      <td colspan="7" style="text-align: center; padding: 40px; color: var(--shoppe-red);">
         <i class="fas fa-exclamation-triangle" style="font-size: 40px; margin-bottom: 15px; display: block;"></i>
         <h4 style="margin-bottom: 10px; color: var(--shoppe-red);">Erro ao carregar feedbacks</h4>
         <p style="font-size: 14px;">${error.message || 'Não foi possível carregar seus feedbacks.'}</p>
@@ -1311,9 +1313,7 @@ function renderizarGraficos() {
     notasPorMes[mesAno].count += 1;
   });
   
-  // --- ALTERAÇÃO AQUI: LÓGICA DE CORES OTIMIZADA ---
-  
-  // 1. Paleta extra de cores para evitar duplicatas (30 cores distintas)
+  // Paleta extra de cores para evitar duplicatas (30 cores distintas)
   const paletaExtra = [
     '#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6', 
     '#dd4477', '#66aa00', '#b82e2e', '#316395', '#994499', '#22aa99', 
@@ -1326,18 +1326,15 @@ function renderizarGraficos() {
   const tiposLabels = Object.keys(tipoCounts);
   const tiposData = Object.values(tipoCounts);
   
-  // Gera as cores: Se tiver cor fixa (ex: Elogio), usa ela. Se não, pega da paleta extra sequencialmente.
+  // Gera as cores
   const tiposCores = tiposLabels.map((tipo, index) => {
       const corPadrao = getCorPorTipo(tipo);
-      // Se a função retornou o cinza padrão (#757575), usamos nossa paleta colorida
       if (corPadrao === '#757575') {
           return paletaExtra[index % paletaExtra.length];
       }
       return corPadrao;
   });
   
-  // ---------------------------------------------------
-
   chartsGrid.innerHTML += `
     <div class="chart-container">
       <div class="chart-header">
@@ -1404,14 +1401,14 @@ function renderizarGraficos() {
   
   // Renderizar gráficos após o DOM ser atualizado
   setTimeout(() => {
-    // Gráfico de pizza - Tipos (AGORA COM AS NOVAS CORES)
+    // Gráfico de pizza - Tipos
     new Chart(document.getElementById('chartTipos'), {
       type: 'pie',
       data: {
         labels: tiposLabels,
         datasets: [{
           data: tiposData,
-          backgroundColor: tiposCores, // Usa a nova lista de cores
+          backgroundColor: tiposCores,
           borderWidth: 1,
           borderColor: '#ffffff'
         }]
@@ -1543,14 +1540,13 @@ function getCorPorTipo(tipo) {
   const cores = {
     'Qualidade Putaway': '#9c27b0',
     'Sugestão de Melhoria': '#009688',
-    'OB Verdadeiro - PNE': '#795548',
-    'OB Verdadeiro - PE': '#795548',
-    'OB Falso': '#757575',
-    'Elogio': '#4caf50',
-    'Orientação': '#2196f3',
-    'Comportamental': '#ff6f00',
-    'PDI': '#e53935',
-    'Melhoria': '#ffc107'
+    'Limite de SKU\'s': '#2196f3',
+    'Sobra': '#ff9800',
+    'Falta': '#f44336',
+    'Embalagens': '#795548',
+    'OB Verdadeiro - PNE': '#4caf50',
+    'OB Verdadeiro - PE': '#4caf50',
+    'OB Falso': '#757575'
   };
   return cores[tipo] || '#757575';
 }
@@ -1717,20 +1713,9 @@ async function exportarFeedbacksPDF() {
       // Informações
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      doc.text('Colaborador:', margin, yPosition);
+      doc.text('CAD:', margin, yPosition);
       doc.setFont('helvetica', 'normal');
-      
-      // Extrair nome do colaborador
-      let colaboradorNome = feedback.colaborador;
-      if (feedback.colaborador && feedback.colaborador.includes('-')) {
-        const parts = feedback.colaborador.split('-');
-        if (parts.length > 1) {
-          colaboradorNome = parts.slice(1).join('-').trim();
-        }
-      }
-      
-      const colaboradorTexto = doc.splitTextToSize(colaboradorNome, contentWidth / 2);
-      doc.text(colaboradorTexto, margin + 20, yPosition);
+      doc.text(feedback.cad || 'N/A', margin + 15, yPosition);
       
       doc.setFont('helvetica', 'bold');
       doc.text('Tipo:', margin + contentWidth / 2, yPosition);
@@ -1739,23 +1724,38 @@ async function exportarFeedbacksPDF() {
       
       yPosition += 6;
       
-      doc.setFont('helvetica', 'bold');
-      doc.text('Endereço WMS:', margin, yPosition);
-      doc.setFont('helvetica', 'normal');
-      doc.text(feedback.endereco || 'N/A', margin + 28, yPosition);
+      // Colaborador
+      let colaboradorNome = feedback.colaborador;
+      if (feedback.colaborador && feedback.colaborador.includes('-')) {
+        const parts = feedback.colaborador.split('-');
+        if (parts.length > 1) {
+          colaboradorNome = parts.slice(1).join('-').trim();
+        }
+      }
       
       doc.setFont('helvetica', 'bold');
-      doc.text('Status:', margin + contentWidth / 2, yPosition);
+      doc.text('Colaborador:', margin, yPosition);
       doc.setFont('helvetica', 'normal');
-      doc.text(feedback.status || 'N/A', margin + contentWidth / 2 + 15, yPosition);
+      const colaboradorTexto = doc.splitTextToSize(colaboradorNome, contentWidth / 2);
+      doc.text(colaboradorTexto, margin + 25, yPosition);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text('Endereço WMS:', margin + contentWidth / 2, yPosition);
+      doc.setFont('helvetica', 'normal');
+      doc.text(feedback.endereco || 'N/A', margin + contentWidth / 2 + 28, yPosition);
       
       yPosition += 6;
       
       doc.setFont('helvetica', 'bold');
-      doc.text('Nota:', margin, yPosition);
+      doc.text('Status:', margin, yPosition);
+      doc.setFont('helvetica', 'normal');
+      doc.text(feedback.status || 'N/A', margin + 15, yPosition);
+      
+      doc.setFont('helvetica', 'bold');
+      doc.text('Nota:', margin + contentWidth / 2, yPosition);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(229, 57, 53);
-      doc.text(`${feedback.nota}/10`, margin + 15, yPosition);
+      doc.text(`${feedback.nota}/10`, margin + contentWidth / 2 + 15, yPosition);
       
       yPosition += 6;
       
