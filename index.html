@@ -3,614 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Feedback</title>
+  <title>Sistema de Feedback | Diffs e Ocorrências da Qualidade</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --shoppe-red: #e53935;
-      --shoppe-red-light: #ff5252;
-      --shoppe-orange: #ff6f00;
-      --shoppe-orange-light: #ff9100;
-      --shoppe-dark: #212121;
-      --shoppe-gray: #757575;
-      --shoppe-light-gray: #f5f5f5;
-      --shoppe-white: #ffffff;
-      --shoppe-green: #4caf50;
-      --shoppe-blue: #2196f3;
-      --shoppe-yellow: #ffc107;
-      --primary: var(--shoppe-dark);
-      --primary-light: #424242;
-      --secondary: var(--shoppe-red);
-      --secondary-light: var(--shoppe-red-light);
-      --success: var(--shoppe-green);
-      --success-light: #66bb6a;
-      --warning: var(--shoppe-orange);
-      --error: var(--shoppe-red);
-      --bg: linear-gradient(135deg, #fff5f5 0%, #ffebee 100%);
-      --card-bg: var(--shoppe-white);
-      --text: var(--shoppe-dark);
-      --text-light: var(--shoppe-gray);
-      --border: #e0e0e0;
-      --shadow: 0 10px 25px rgba(229, 57, 53, 0.08);
-      --shadow-hover: 0 15px 35px rgba(229, 57, 53, 0.15);
-      --radius: 16px;
-      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-    
-    body {
-      background: var(--bg);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-      color: var(--text);
-      line-height: 1.6;
-    }
-    
-    /* Tela de Login */
-    .login-container {
-      background: var(--card-bg);
-      padding: 50px 40px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
-      display: block;
-      transition: var(--transition);
-      border: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .login-container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 6px;
-      background: linear-gradient(90deg, var(--shoppe-red), var(--shoppe-orange));
-    }
-    
-    .login-container:hover {
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-5px);
-    }
-    
-    .login-logo {
-      margin-bottom: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .logo-icon {
-      background: linear-gradient(135deg, var(--shoppe-red), var(--shoppe-orange));
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 32px;
-      box-shadow: 0 8px 20px rgba(229, 57, 53, 0.3);
-    }
-    
-    .login-container h2 {
-      color: var(--shoppe-red);
-      margin-bottom: 10px;
-      font-weight: 700;
-      font-size: 28px;
-    }
-    
-    .login-subtitle {
-      color: var(--text-light);
-      margin-bottom: 35px;
-      font-size: 15px;
-    }
-    
-    .input-group {
-      position: relative;
-      margin-bottom: 25px;
-      text-align: left;
-    }
-    
-    .input-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: var(--primary);
-      font-size: 14px;
-    }
-    
-    .input-icon {
-      position: absolute;
-      left: 18px;
-      top: 42px;
-      color: var(--text-light);
-      font-size: 18px;
-    }
-    
-    .login-container input {
-      width: 100%;
-      padding: 16px 20px 16px 52px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      font-size: 16px;
-      transition: var(--transition);
-      background-color: var(--shoppe-light-gray);
-      color: var(--text);
-    }
-    
-    .login-container input:focus {
-      outline: none;
-      border-color: var(--shoppe-red);
-      box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
-      background-color: white;
-    }
-    
-    .login-container button {
-      width: 100%;
-      padding: 18px;
-      background: linear-gradient(135deg, var(--shoppe-red), var(--shoppe-orange));
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 16px;
-      cursor: pointer;
-      transition: var(--transition);
-      margin-top: 10px;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-    
-    .login-container button:hover {
-      background: linear-gradient(135deg, var(--shoppe-orange), var(--shoppe-red));
-      box-shadow: 0 10px 20px rgba(229, 57, 53, 0.3);
-      transform: translateY(-2px);
-    }
-    
-    .login-container button:active {
-      transform: translateY(0);
-    }
-    
-    .login-error {
-      color: var(--shoppe-red);
-      margin-top: 15px;
-      font-size: 14px;
-      display: none;
-      padding: 12px;
-      background-color: rgba(229, 57, 53, 0.08);
-      border-radius: 8px;
-      border-left: 4px solid var(--shoppe-red);
-    }
-    
-    /* Tela Principal (feedback) */
-    .main-container {
-      display: none;
-      width: 100%;
-      max-width: 600px;
-    }
-    
-    .header {
-      background: linear-gradient(135deg, var(--shoppe-red), var(--shoppe-orange));
-      padding: 25px 30px;
-      border-radius: var(--radius) var(--radius) 0 0;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 5px 15px rgba(229, 57, 53, 0.2);
-    }
-    
-    .header-info h2 {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 5px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .header-info p {
-      font-size: 14px;
-      opacity: 0.9;
-    }
-    
-    .user-badge {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 10px 18px;
-      border-radius: 50px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 500;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .user-badge i {
-      font-size: 18px;
-    }
-    
-    .container {
-      background: var(--card-bg);
-      border-radius: 0 0 var(--radius) var(--radius);
-      box-shadow: var(--shadow);
-      width: 100%;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-top: none;
-    }
-    
-    .form-content {
-      padding: 35px 30px;
-    }
-    
-    .form-section {
-      margin-bottom: 30px;
-    }
-    
-    .form-section h3 {
-      font-size: 18px;
-      color: var(--shoppe-red);
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid var(--border);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .form-section h3 i {
-      color: var(--shoppe-red);
-    }
-    
-    label {
-      display: block;
-      margin: 0 0 8px 5px;
-      color: var(--primary);
-      font-weight: 600;
-      font-size: 14px;
-    }
-    
-    input, select, textarea {
-      width: 100%;
-      padding: 16px 20px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      font-size: 16px;
-      transition: var(--transition);
-      background-color: var(--shoppe-light-gray);
-      color: var(--text);
-    }
-    
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--shoppe-red);
-      box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
-      background-color: white;
-    }
-    
-    select {
-      appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23757575' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 20px center;
-      background-size: 18px;
-      padding-right: 50px;
-    }
-    
-    textarea {
-      height: 120px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-    
-    /* Estilos para o campo de nota com cores Shoppe */
-    .nota-container {
-      background: linear-gradient(135deg, #fff8f8 0%, #fff0f0 100%);
-      padding: 20px;
-      border-radius: 12px;
-      border: 2px solid #ffe0e0;
-      margin-bottom: 25px;
-    }
-    
-    .nota-display {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 10px;
-    }
-    
-    .nota-slider {
-      flex: 1;
-      -webkit-appearance: none;
-      height: 10px;
-      border-radius: 5px;
-      background: linear-gradient(to right, var(--shoppe-red), var(--shoppe-orange), var(--shoppe-green));
-      outline: none;
-    }
-    
-    .nota-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: white;
-      cursor: pointer;
-      border: 3px solid var(--shoppe-red);
-      box-shadow: 0 4px 10px rgba(229, 57, 53, 0.2);
-      transition: var(--transition);
-    }
-    
-    .nota-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.1);
-      border-color: var(--shoppe-orange);
-    }
-    
-    .nota-value {
-      background: linear-gradient(135deg, var(--shoppe-red), var(--shoppe-orange));
-      color: white;
-      min-width: 70px;
-      padding: 10px 15px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 20px;
-      text-align: center;
-      transition: var(--transition);
-      box-shadow: 0 4px 10px rgba(229, 57, 53, 0.2);
-    }
-    
-    .nota-labels {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 5px;
-      font-size: 12px;
-      color: var(--text-light);
-    }
-    
-    .nota-indicator {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
-      font-size: 14px;
-      color: var(--primary);
-    }
-    
-    .nota-indicator-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--shoppe-red);
-    }
-    
-    .signature-container {
-      margin: 25px 0;
-      padding: 25px;
-      background: linear-gradient(135deg, #fff8f8 0%, #fff0f0 100%);
-      border-radius: 12px;
-      border: 2px dashed #ffcdd2;
-      transition: var(--transition);
-    }
-    
-    .signature-container:hover {
-      border-color: var(--shoppe-red);
-      background: linear-gradient(135deg, #fff0f0 0%, #ffe0e0 100%);
-    }
-    
-    .signature-label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    
-    .signature-label label {
-      margin: 0;
-      font-size: 16px;
-      color: var(--shoppe-red);
-    }
-    
-    .signature-label button {
-      padding: 10px 18px;
-      background: linear-gradient(135deg, var(--shoppe-red), #ff5252);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .signature-label button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 15px rgba(229, 57, 53, 0.2);
-    }
-    
-    .signature-pad {
-      border-radius: 10px;
-      background: white;
-      width: 100%;
-      height: 200px;
-      position: relative;
-      cursor: crosshair;
-      overflow: hidden;
-      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
-      border: 1px solid var(--border);
-    }
-    
-    #signatureCanvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-    
-    .signature-instructions {
-      text-align: center;
-      font-size: 13px;
-      color: var(--shoppe-red);
-      margin-top: 12px;
-      font-style: italic;
-    }
-    
-    .btn-group {
-      display: flex;
-      gap: 15px;
-      margin-top: 30px;
-    }
-    
-    .btn-submit {
-      flex: 1;
-      padding: 18px;
-      background: linear-gradient(135deg, var(--shoppe-red), var(--shoppe-orange));
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 16px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-    
-    .btn-submit:hover {
-      background: linear-gradient(135deg, var(--shoppe-orange), var(--shoppe-red));
-      box-shadow: 0 10px 20px rgba(229, 57, 53, 0.3);
-      transform: translateY(-2px);
-    }
-    
-    .btn-submit:disabled {
-      background: #bdbdbd;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    
-    .loader {
-      display: none;
-      text-align: center;
-      margin-top: 20px;
-      padding: 20px;
-      background: linear-gradient(135deg, #fff8f8 0%, #fff0f0 100%);
-      border-radius: 12px;
-      color: var(--shoppe-red);
-      font-weight: 600;
-    }
-    
-    .loader i {
-      margin-right: 10px;
-      color: var(--shoppe-red);
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .form-footer {
-      text-align: center;
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-      color: var(--text-light);
-      font-size: 13px;
-    }
-    
-    /* Estilo para os options do select */
-    option {
-      padding: 10px;
-    }
-    
-    option[value="Elogio"] { color: var(--shoppe-green); }
-    option[value="Orientação"] { color: var(--shoppe-blue); }
-    option[value="Comportamental"] { color: var(--shoppe-orange); }
-    option[value="PDI"] { color: var(--shoppe-red); }
-    option[value="Melhoria"] { color: var(--shoppe-yellow); }
-    
-    /* Responsividade */
-    @media (max-width: 768px) {
-      .login-container, .container {
-        padding: 35px 25px;
-      }
-      
-      .header {
-        padding: 20px;
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-      }
-      
-      .user-badge {
-        align-self: stretch;
-        justify-content: center;
-      }
-      
-      .btn-group {
-        flex-direction: column;
-      }
-      
-      .signature-container {
-        padding: 20px;
-      }
-      
-      .nota-container {
-        padding: 15px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      body {
-        padding: 15px;
-      }
-      
-      .login-container, .container {
-        padding: 30px 20px;
-      }
-      
-      .login-container h2 {
-        font-size: 24px;
-      }
-      
-      .header-info h2 {
-        font-size: 20px;
-      }
-      
-      .nota-display {
-        flex-direction: column;
-        gap: 15px;
-      }
-      
-      .nota-value {
-        width: 100%;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -621,36 +18,41 @@
       <i class="fas fa-comment-dots"></i>
     </div>
     <div>
-      <h2>Sistema de Feedback</h2>
-      <p class="login-subtitle">Gestão de Avaliação de Desempenho</p>
+      <h2>Registro de Feedback Diffs e Ocorrencias da qualidade</h2>
+      <p class="login-subtitle">  </p>
     </div>
   </div>
   
   <form id="loginForm">
     <div class="input-group">
       <label for="loginEmail"><i class="fas fa-envelope"></i> E-mail</label>
-      <div class="input-icon">
-        <i class="fas fa-user"></i>
-      </div>
-      <input type="email" id="loginEmail" placeholder="seu.email@empresa.com" required>
+      <input type="email" id="loginEmail" placeholder="email@empresa.com" required>
     </div>
     
-    <div class="input-group">
-      <label for="loginSenha"><i class="fas fa-lock"></i> Senha</label>
-      <div class="input-icon">
-        <i class="fas fa-key"></i>
-      </div>
-      <input type="password" id="loginSenha" placeholder="••••••••" required>
+    <div class="login-info">
+      <p style="text-align: center; color: var(--shoppe-gray); font-size: 13px; margin: 15px 0 25px;">
+        <i class="fas fa-info-circle"></i> Digite seu e-mail corporativo para acessar o sistema
+      </p>
     </div>
     
     <button type="submit">
       <i class="fas fa-sign-in-alt"></i>
-      Entrar no Sistema
+      Acessar Sistema
     </button>
     
     <div class="login-error" id="loginError">
       <i class="fas fa-exclamation-circle"></i>
-      <span id="errorText">E-mail ou senha inválidos!</span>
+      <span id="errorText">E-mail inválido!</span>
+    </div>
+    
+    <div class="login-success" id="loginSuccess">
+      <i class="fas fa-check-circle"></i>
+      <span>Login autorizado! Redirecionando...</span>
+    </div>
+    
+    <div class="login-loading" id="loginLoading">
+      <i class="fas fa-circle-notch fa-spin"></i>
+      <span>Verificando credenciais...</span>
     </div>
   </form>
   
@@ -659,607 +61,469 @@
   </div>
 </div>
 
-<!-- Tela Principal do Sistema -->
-<div class="main-container" id="mainScreen">
-  <div class="header">
-    <div class="header-info">
-      <h2><i class="fas fa-comments"></i> Registro de Feedback</h2>
-      <p>Preencha os dados abaixo para registrar um feedback</p>
-    </div>
-    
-    <div class="user-badge" id="userInfo">
-      <i class="fas fa-user-circle"></i>
-      <span>Usuário: <strong id="loggedUser"></strong></span>
+<!-- Aplicativo Principal com Menu Lateral -->
+<div class="app-container" id="appScreen">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="header-logo">
+          <i class="fas fa-comments"></i>
+        </div>
+        <div class="header-title">
+          <h2>Registro de Feedback</h2>
+          <p>Sistema de Diffs e Ocorrências da Qualidade</p>
+        </div>
+      </div>
+      
+      <div class="user-info" id="userInfo">
+        <i class="fas fa-user-circle"></i>
+        <span>Usuário: <strong id="loggedUser"></strong></span>
+      </div>
     </div>
   </div>
   
-  <div class="container">
-    <div class="form-content">
-      <form id="feedbackForm">
-        <div class="form-section">
-          <h3><i class="fas fa-user-tie"></i> Informações do Feedback</h3>
-          
-          <div class="input-group">
-            <label for="gestor">Nome do Gestor</label>
-            <input type="text" id="gestor" placeholder="Quem está aplicando o feedback?" required>
-          </div>
-          
-          <div class="input-group">
-            <label for="colaborador">Colaborador</label>
-            <select id="colaborador" required disabled>
-              <option value="">Carregando lista de colaboradores...</option>
-            </select>
-          </div>
-          
-          <div class="input-group">
-            <label for="tipo">Tipo de Feedback</label>
-            <select id="tipo" required>
-              <option value="">Selecione o tipo de feedback...</option>
-              <option value="Elogio">🎉 Elogio</option>
-              <option value="Orientação">💡 Orientação Técnica</option>
-              <option value="Comportamental">👥 Comportamental</option>
-              <option value="PDI">📈 Acompanhamento PDI</option>
-              <option value="Melhoria">🔧 Sugestão de Melhoria</option>
-            </select>
-          </div>
-          
-          <div class="nota-container">
-            <label>Nota do Feedback</label>
-            <div class="nota-display">
-              <input type="range" 
-                     id="nota" 
-                     min="1" 
-                     max="10" 
-                     step="1" 
-                     value="5"
-                     class="nota-slider"
-                     oninput="updateNotaDisplay(this.value)">
-              <div class="nota-value" id="notaValue">5/10</div>
-            </div>
-            <div class="nota-labels">
-              <span>1 - Baixo</span>
-              <span>10 - Excelente</span>
-            </div>
-            <div class="nota-indicator">
-              <div class="nota-indicator-dot" id="notaIndicator"></div>
-              <span id="notaTexto">Neutro - Satisfatório</span>
-            </div>
-          </div>
-          
-          <div class="input-group">
-            <label for="mensagem">Descrição do Feedback</label>
-            <textarea id="mensagem" placeholder="Descreva os pontos abordados no feedback, observações importantes, resultados esperados, etc." required></textarea>
-          </div>
-        </div>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  
+  <div class="main-content">
+    <!-- Menu Lateral -->
+    <div class="sidebar" id="sidebar">
+      <div class="nav-section">
+        <div class="nav-title">Navegação</div>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="#" class="nav-link active" data-page="feedback">
+              <i class="fas fa-plus-circle"></i>
+              Novo Feedback
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-page="meus-feedbacks">
+              <i class="fas fa-history"></i>
+              Meus Feedbacks
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-page="relatorios">
+              <i class="fas fa-chart-bar"></i>
+              Relatórios
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="nav-section">
+        <div class="nav-title">Ações Rápidas</div>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <button class="nav-link" onclick="exportarFeedbacksPDF()" style="background: none; border: none; cursor: pointer; text-align: left; width: 100%;">
+              <i class="fas fa-file-pdf"></i>
+              Exportar PDF
+            </button>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="nav-section">
+        <ul class="nav-menu">
+          <li class="nav-item logout">
+            <a href="#" class="nav-link logout" id="btnLogout">
+              <i class="fas fa-sign-out-alt"></i>
+              Sair
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Área de Conteúdo -->
+    <div class="content-area" id="contentArea">
+      <!-- Página: Novo Feedback -->
+      <div id="page-feedback" class="page-content active">
+        <h3><i class="fas fa-plus-circle"></i> Registrar Novo Feedback</h3>
         
-        <div class="form-section">
-          <h3><i class="fas fa-signature"></i> Assinatura do Colaborador</h3>
-          
-          <div class="signature-container">
-            <div class="signature-label">
-              <label>Assine no espaço abaixo</label>
-              <button type="button" onclick="clearSignature()">
-                <i class="fas fa-eraser"></i>
-                Limpar Assinatura
+        <div class="feedback-form-container">
+          <form id="feedbackForm">
+            <div class="form-section">
+              <h4><i class="fas fa-user-tie"></i> Informações do Feedback</h4>
+              
+              <!-- CAMPO CAD -->
+              <div class="input-group">
+                <label for="cad">CAD</label>
+                <input type="text" id="cad" placeholder="Digite o número do CAD" required>
+              </div>
+              
+              <!-- CAMPO GESTOR -->
+              <div class="input-group">
+                <label for="gestor">Nome do Gestor</label>
+                <input type="text" id="gestor" placeholder="Quem está aplicando o feedback?" required>
+              </div>
+              
+              <!-- CAMPO COLABORADOR -->
+              <div class="input-group">
+                <label for="colaborador">Colaborador</label>
+                <select id="colaborador" required disabled>
+                  <option value="">Carregando lista de colaboradores...</option>
+                </select>
+              </div>
+              
+              <!-- CAMPO TIPO DE FEEDBACK -->
+              <div class="input-group">
+                <label for="tipo">Tipo de Feedback</label>
+                <select id="tipo" required>
+                  <option value="">Selecione o tipo de feedback...</option>
+                  <option value="Qualidade Putaway">📦 Qualidade Putaway</option>
+                  <option value="Sugestão de Melhoria">💡 Sugestão de Melhoria</option>
+                  <option value="Limite de SKU's">🔢 Limite de SKU's</option>
+                  <option value="Sobra">➕ Sobra</option>
+                  <option value="Falta">➖ Falta</option>
+                  <option value="Embalagens">🛍️ Embalagens</option>
+                  <option value="OB Verdadeiro - PNE">✅ OB Verdadeiro - PNE</option>
+                  <option value="OB Verdadeiro - PE">✅ OB Verdadeiro - PE</option>
+                  <option value="OB Falso">❌ OB Falso</option>
+                </select>
+              </div>
+
+              <!-- CAMPO ENDEREÇO WMS -->
+              <div class="input-group">
+                <label for="endereco">Endereço WMS</label>
+                <input type="text" id="endereco" placeholder="Digite o endereço" required>
+              </div>
+
+              <!-- CAMPO ENDEREÇO TRATADO -->
+              <div class="input-group">
+                <label for="enderecoTratado">Endereço Tratado?</label>
+                <select id="enderecoTratado" required>
+                  <option value="">Selecione uma opção...</option>
+                  <option value="Concluido">✅ Concluído</option>
+                  <option value="Pendente">⏳ Pendente</option>
+                  <option value="NA">⚪ NA (Não se aplica)</option>
+                </select>
+              </div>
+              
+              <!-- CAMPO NOTA -->
+              <div class="nota-container">
+                <label>Nota do Feedback</label>
+                <div class="nota-display">
+                  <input type="range" 
+                         id="nota" 
+                         min="1" 
+                         max="10" 
+                         step="1" 
+                         value="5"
+                         class="nota-slider"
+                         oninput="updateNotaDisplay(this.value)">
+                  <div class="nota-value" id="notaValue">5/10</div>
+                </div>
+                <div class="nota-labels">
+                  <span>1 - Baixo</span>
+                  <span>10 - Excelente</span>
+                </div>
+                <div class="nota-indicator">
+                  <div class="nota-indicator-dot" id="notaIndicator"></div>
+                  <span id="notaTexto">Neutro - Satisfatório</span>
+                </div>
+              </div>
+              
+              <!-- CAMPO MENSAGEM -->
+              <div class="input-group">
+                <label for="mensagem">Descrição do Feedback</label>
+                <textarea id="mensagem" placeholder="Descreva os pontos abordados no feedback, observações importantes, resultados esperados, etc." required></textarea>
+              </div>
+            </div>
+            
+            <!-- SEÇÃO ASSINATURA -->
+            <div class="form-section">
+              <h4><i class="fas fa-signature"></i> Assinatura do Colaborador</h4>
+              
+              <div class="signature-container">
+                <div class="signature-label">
+                  <label>Assine no espaço abaixo</label>
+                  <button type="button" onclick="clearSignature()">
+                    <i class="fas fa-eraser"></i>
+                    Limpar Assinatura
+                  </button>
+                </div>
+                
+                <div class="signature-pad" id="signaturePad">
+                  <canvas id="signatureCanvas"></canvas>
+                </div>
+                
+                <div class="signature-instructions">
+                  <i class="fas fa-mouse-pointer"></i> Clique e arraste para assinar acima
+                </div>
+              </div>
+            </div>
+            
+            <!-- BOTÕES DE AÇÃO -->
+            <div class="btn-group">
+              <button type="submit" class="btn-submit" id="btnEnviar">
+                <i class="fas fa-paper-plane"></i>
+                Registrar Feedback
+              </button>
+              
+              <button type="button" class="btn-submit secondary" onclick="limparFormulario()">
+                <i class="fas fa-broom"></i>
+                Limpar Formulário
               </button>
             </div>
             
-            <div class="signature-pad" id="signaturePad">
-              <canvas id="signatureCanvas"></canvas>
+            <!-- LOADER -->
+            <div class="loader" id="loader">
+              <i class="fas fa-circle-notch"></i>
+              Enviando feedback para o sistema...
+            </div>
+          </form>
+          
+          <div class="form-footer">
+            <p><i class="fas fa-shield-alt"></i> Os dados são armazenados de forma segura e confidencial.</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Página: Meus Feedbacks -->
+      <div id="page-meus-feedbacks" class="page-content" style="display: none;">
+        <h3><i class="fas fa-history"></i> Meus Feedbacks Registrados</h3>
+        
+        <div class="feedbacks-container">
+          <div class="feedbacks-header">
+            <div>
+              <h3>Histórico de Feedbacks</h3>
+              <p>Visualize todos os feedbacks registrados por você</p>
             </div>
             
-            <div class="signature-instructions">
-              <i class="fas fa-mouse-pointer"></i> Clique e arraste para assinar acima (toque e arraste em dispositivos móveis)
+            <div class="btn-group" style="flex-direction: row; gap: 10px;">
+              <button class="btn-submit secondary" onclick="carregarMeusFeedbacks()" style="flex: 1;">
+                <i class="fas fa-sync-alt"></i>
+                Atualizar
+              </button>
+              
+              <button class="btn-submit secondary" onclick="alternarVisualizacao()" id="toggleViewBtn" style="flex: 1;">
+                <i class="fas fa-th-list"></i>
+                Cards
+              </button>
+            </div>
+          </div>
+          
+          <!-- Cards para Mobile -->
+          <div id="feedbacksCards" class="feedbacks-cards">
+            <div style="text-align: center; padding: 40px 20px; color: var(--text-light);">
+              <i class="fas fa-history" style="font-size: 40px; margin-bottom: 15px; color: #e0e0e0;"></i>
+              <h4 style="margin-bottom: 10px; color: var(--text-light);">Nenhum feedback carregado</h4>
+              <p style="font-size: 14px;">Clique em "Atualizar" para carregar seus feedbacks</p>
+            </div>
+          </div>
+          
+          <!-- Tabela para Desktop -->
+          <div class="feedbacks-table-container">
+            <table class="feedbacks-table">
+              <thead>
+                <tr>
+                  <th>DATA/HORA</th>
+                  <th>CAD</th>
+                  <th>COLABORADOR</th>
+                  <th>TIPO</th>
+                  <th>NOTA</th>
+                  <th>ENDEREÇO WMS</th>
+                  <th>ENDEREÇO TRATADO?</th>
+                </tr>
+              </thead>
+              <tbody id="feedbacksTableBody">
+                <tr>
+                  <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-light);">
+                    <i class="fas fa-history" style="font-size: 40px; margin-bottom: 15px; color: #e0e0e0; display: block;"></i>
+                    <h4 style="margin-bottom: 10px; color: var(--text-light);">Nenhum feedback carregado</h4>
+                    <p style="font-size: 14px;">Clique em "Atualizar" para carregar seus feedbacks</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="pagination" id="paginationControls" style="display: none;">
+            <!-- Paginação será inserida aqui -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Página: Relatórios -->
+      <div id="page-relatorios" class="page-content" style="display: none;">
+        <h3><i class="fas fa-chart-bar"></i> Relatórios e Estatísticas</h3>
+        
+        <div class="reports-container">
+          <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <div>
+                  <div class="stat-value" id="totalFeedbacks">0</div>
+                  <div class="stat-label">Total de Feedbacks</div>
+                </div>
+                <div class="stat-icon" style="background: linear-gradient(135deg, #e53935, #ff5252);">
+                  <i class="fas fa-comments"></i>
+                </div>
+              </div>
+              <div class="stat-trend positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>Atualizado agora</span>
+              </div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-header">
+                <div>
+                  <div class="stat-value" id="avgNota">0.0</div>
+                  <div class="stat-label">Nota Média</div>
+                </div>
+                <div class="stat-icon" style="background: linear-gradient(135deg, #ff6f00, #ff9100);">
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+              <div class="stat-trend positive">
+                <i class="fas fa-chart-line"></i>
+                <span>Desempenho</span>
+              </div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-header">
+                <div>
+                  <div class="stat-value" id="topTipo">-</div>
+                  <div class="stat-label">Tipo Mais Comum</div>
+                </div>
+                <div class="stat-icon" style="background: linear-gradient(135deg, #2196f3, #2979ff);">
+                  <i class="fas fa-chart-pie"></i>
+                </div>
+              </div>
+              <div class="stat-trend positive">
+                <i class="fas fa-info-circle"></i>
+                <span>Análise</span>
+              </div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-header">
+                <div>
+                  <div class="stat-value" id="completionRate">0%</div>
+                  <div class="stat-label">Taxa de Conclusão</div>
+                </div>
+                <div class="stat-icon" style="background: linear-gradient(135deg, #4caf50, #66bb6a);">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+              </div>
+              <div class="stat-trend positive">
+                <i class="fas fa-percentage"></i>
+                <span>Eficiência</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="charts-grid" id="chartsGrid">
+            <div style="text-align: center; padding: 40px 20px; color: var(--text-light);">
+              <i class="fas fa-chart-bar" style="font-size: 40px; margin-bottom: 15px; color: #e0e0e0;"></i>
+              <h4 style="margin-bottom: 10px; color: var(--text-light);">Carregando relatórios...</h4>
+              <p style="font-size: 14px; margin-bottom: 20px;">Registre alguns feedbacks para gerar estatísticas e gráficos</p>
+              <button class="btn-submit" onclick="gerarRelatorios()" style="max-width: 200px; margin: 0 auto;">
+                <i class="fas fa-chart-line"></i>
+                Gerar Relatórios
+              </button>
             </div>
           </div>
         </div>
-        
-        <div class="btn-group">
-          <button type="submit" class="btn-submit" id="btnEnviar">
-            <i class="fas fa-paper-plane"></i>
-            Registrar Feedback
-          </button>
-        </div>
-        
-        <div class="loader" id="loader">
-          <i class="fas fa-circle-notch"></i>
-          Enviando feedback para o sistema...
-        </div>
-      </form>
-      
-      <div class="form-footer">
-        <p><i class="fas fa-shield-alt"></i> Os dados são armazenados de forma segura e confidencial.</p>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-  // URL do Google Apps Script
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDZvje-GFp51Ihe-QuLKwFlrGGIo01mtT0nZmEREQnZGbavHAndWG51FH0_mxP_C5OQw/exec";
-  
-  // Estado do login
-  let usuarioLogado = null;
-  let isDrawing = false;
-  let lastX = 0;
-  let lastY = 0;
-  let canvas, ctx;
-
-  // ===== FUNÇÕES PARA NOTA =====
-  function updateNotaDisplay(valor) {
-    const notaValue = document.getElementById('notaValue');
-    const notaIndicator = document.getElementById('notaIndicator');
-    const notaTexto = document.getElementById('notaTexto');
+<!-- Modal de Confirmação -->
+<div class="modal-overlay" id="confirmationModal">
+  <div class="confirmation-modal">
+    <div class="modal-header">
+      <h3><i class="fas fa-clipboard-check"></i> CONFIRMAÇÃO</h3>
+      <div class="modal-subtitle">Revise os dados antes de enviar</div>
+    </div>
     
-    // Atualizar valor
-    notaValue.textContent = valor + '/10';
-    
-    // Determinar cor e texto baseado no valor (usando cores Shoppe)
-    let cor, texto;
-    if (valor <= 3) {
-      cor = 'linear-gradient(135deg, #e53935, #d32f2f)';
-      texto = 'Baixo - Precisa de Melhoria';
-    } else if (valor <= 5) {
-      cor = 'linear-gradient(135deg, #ff6f00, #f57c00)';
-      texto = 'Regular - Abaixo do Esperado';
-    } else if (valor <= 7) {
-      cor = 'linear-gradient(135deg, #ff8a00, #ff9800)';
-      texto = 'Bom - Atende Expectativas';
-    } else if (valor <= 9) {
-      cor = 'linear-gradient(135deg, #ff9100, #ffab00)';
-      texto = 'Ótimo - Acima da Média';
-    } else {
-      cor = 'linear-gradient(135deg, #ffab00, #ffc400)';
-      texto = 'Excelente - Fora da Curva';
-    }
-    
-    // Aplicar cores
-    notaValue.style.background = cor;
-    notaIndicator.style.background = 'var(--shoppe-orange)';
-    notaTexto.textContent = texto;
-    
-    // Mudar cor do indicador baseado na nota
-    if (valor <= 3) {
-      notaIndicator.style.background = 'var(--shoppe-red)';
-    } else if (valor <= 7) {
-      notaIndicator.style.background = 'var(--shoppe-orange)';
-    } else {
-      notaIndicator.style.background = 'var(--shoppe-yellow)';
-    }
-  }
-
-  // ===== INICIALIZAÇÃO DA ASSINATURA =====
-  function initializeSignature() {
-    canvas = document.getElementById('signatureCanvas');
-    ctx = canvas.getContext('2d');
-    
-    // Configurar canvas
-    resizeCanvas();
-    
-    // Configurar estilo da linha (cor Shoppe)
-    ctx.lineWidth = 3;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#e53935';
-    
-    // Adicionar event listeners
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseout', stopDrawing);
-    
-    // Touch events para dispositivos móveis
-    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
-    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
-    canvas.addEventListener('touchend', stopDrawing);
-  }
-
-  // ===== FUNÇÕES DA ASSINATURA =====
-  function resizeCanvas() {
-    const container = document.getElementById('signaturePad');
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
-    
-    // Limpar canvas com fundo branco
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Adicionar guia de texto sutil (cor Shoppe)
-    ctx.fillStyle = '#ffcdd2';
-    ctx.font = 'italic 16px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('Assine aqui', canvas.width / 2, canvas.height / 2);
-  }
-
-  function getMousePos(e) {
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    };
-  }
-
-  function getTouchPos(e) {
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: e.touches[0].clientX - rect.left,
-      y: e.touches[0].clientY - rect.top
-    };
-  }
-
-  function startDrawing(e) {
-    e.preventDefault();
-    isDrawing = true;
-    const pos = e.type.includes('mouse') ? getMousePos(e) : getTouchPos(e);
-    [lastX, lastY] = [pos.x, pos.y];
-    
-    // Começar novo caminho
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-  }
-
-  function draw(e) {
-    if (!isDrawing) return;
-    e.preventDefault();
-    
-    const pos = e.type.includes('mouse') ? getMousePos(e) : getTouchPos(e);
-    
-    // Desenhar linha
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
-    
-    // Atualizar última posição
-    [lastX, lastY] = [pos.x, pos.y];
-  }
-
-  function handleTouchStart(e) {
-    e.preventDefault();
-    startDrawing(e);
-  }
-
-  function handleTouchMove(e) {
-    e.preventDefault();
-    draw(e);
-  }
-
-  function stopDrawing() {
-    isDrawing = false;
-  }
-
-  function clearSignature() {
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Re-adicionar guia de texto
-    ctx.fillStyle = '#ffcdd2';
-    ctx.font = 'italic 16px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('Assine aqui', canvas.width / 2, canvas.height / 2);
-  }
-
-  function isSignatureEmpty() {
-    // Verificar se o canvas está vazio (apenas com o texto guia)
-    const blankCanvas = document.createElement('canvas');
-    blankCanvas.width = canvas.width;
-    blankCanvas.height = canvas.height;
-    const blankCtx = blankCanvas.getContext('2d');
-    blankCtx.fillStyle = '#ffffff';
-    blankCtx.fillRect(0, 0, blankCanvas.width, blankCanvas.height);
-    blankCtx.fillStyle = '#ffcdd2';
-    blankCtx.font = 'italic 16px Arial';
-    blankCtx.textAlign = 'center';
-    blankCtx.textBaseline = 'middle';
-    blankCtx.fillText('Assine aqui', blankCanvas.width / 2, blankCanvas.height / 2);
-    
-    return canvas.toDataURL() === blankCanvas.toDataURL();
-  }
-
-  // ===== FUNÇÕES DE LOGIN =====
-  document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('loginEmail').value.trim();
-    const senha = document.getElementById('loginSenha').value;
-    const errorDiv = document.getElementById('loginError');
-    const errorText = document.getElementById('errorText');
-    
-    // Validar e-mail básico
-    if (!email.includes('@')) {
-      errorText.textContent = "Por favor, insira um e-mail válido";
-      errorDiv.style.display = 'block';
-      return;
-    }
-    
-    // Mostrar loading
-    const loginBtn = e.target.querySelector('button');
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
-    
-    // Enviar dados para verificação
-    fetch(SCRIPT_URL + "?action=login", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8',
-      },
-      body: JSON.stringify({ email: email, senha: senha })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        // Login bem-sucedido
-        usuarioLogado = {
-          email: email,
-          nome: data.nome || email.split('@')[0]
-        };
+    <div class="modal-content">
+      <div class="data-grid">
+        <div class="data-item">
+          <label>DATA/HORA</label>
+          <div class="data-value" id="confirmDataHora"></div>
+        </div>
         
-        // Armazenar no sessionStorage (apenas para esta sessão)
-        sessionStorage.setItem('feedback_usuario', JSON.stringify(usuarioLogado));
+        <div class="data-item">
+          <label>CAD</label>
+          <div class="data-value" id="confirmCAD"></div>
+        </div>
         
-        // Mostrar tela principal com animação
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainScreen').style.display = 'block';
-        document.getElementById('loggedUser').textContent = usuarioLogado.nome;
+        <div class="data-item">
+          <label>GESTOR</label>
+          <div class="data-value" id="confirmGestor"></div>
+        </div>
         
-        // Inicializar assinatura e carregar dados
-        setTimeout(() => {
-          initializeSignature();
-          carregarColaboradores();
-          // Inicializar display da nota
-          updateNotaDisplay(document.getElementById('nota').value);
-        }, 100);
-      } else {
-        // Login falhou
-        errorText.textContent = data.message || "E-mail ou senha inválidos!";
-        errorDiv.style.display = 'block';
+        <div class="data-item">
+          <label>COLABORADOR</label>
+          <div class="data-value" id="confirmColaborador"></div>
+        </div>
         
-        // Adicionar animação de erro
-        errorDiv.style.animation = 'shake 0.5s';
-        setTimeout(() => {
-          errorDiv.style.animation = '';
-        }, 500);
-      }
-    })
-    .catch(error => {
-      console.error('Erro no login:', error);
-      errorText.textContent = "Erro de conexão. Verifique sua internet e tente novamente.";
-      errorDiv.style.display = 'block';
-    })
-    .finally(() => {
-      loginBtn.disabled = false;
-      loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar no Sistema';
-    });
-  });
-
-  // ===== VERIFICAR SE JÁ ESTÁ LOGADO =====
-  window.addEventListener('load', function() {
-    // SEMPRE mostrar tela de login ao carregar
-    document.getElementById('loginScreen').style.display = 'block';
-    document.getElementById('mainScreen').style.display = 'none';
-    
-    // Limpar qualquer sessão anterior
-    sessionStorage.removeItem('feedback_usuario');
-    
-    // Focar no campo de email
-    setTimeout(() => {
-      document.getElementById('loginEmail').focus();
-    }, 300);
-  });
-
-  // ===== FUNÇÃO PARA CARREGAR COLABORADORES =====
-  function carregarColaboradores() {
-    const select = document.getElementById('colaborador');
-    
-    fetch(SCRIPT_URL + "?getLista=true")
-      .then(response => response.json())
-      .then(lista => {
-        select.innerHTML = '<option value="">Selecione o colaborador...</option>';
-        if (lista.length === 0) {
-          select.innerHTML = '<option value="">Nenhum colaborador encontrado</option>';
-          return;
-        }
-        lista.forEach(item => {
-          let opt = document.createElement('option');
-          let textoCompleto = item.matricula + " - " + item.nome;
-          opt.value = textoCompleto;
-          opt.text = textoCompleto;
-          select.appendChild(opt);
-        });
-        select.disabled = false;
+        <div class="data-item">
+          <label>TIPO DE FEEDBACK</label>
+          <div class="data-value" id="confirmTipo"></div>
+        </div>
         
-        // Adicionar estilo após carregar
-        select.style.background = "white";
-        select.style.borderColor = "#e0e0e0";
-      })
-      .catch(err => {
-        console.error("Erro ao carregar lista:", err);
-        select.innerHTML = '<option value="">Erro ao carregar. Verifique a conexão.</option>';
-      });
-  }
-
-  // ===== ENVIO DOS DADOS (POST) =====
-  document.getElementById('feedbackForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    if (!usuarioLogado) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Sessão Expirada',
-        text: 'Faça login novamente.',
-        confirmButtonColor: '#e53935'
-      });
-      sessionStorage.removeItem('feedback_usuario');
-      location.reload();
-      return;
-    }
-    
-    // Verificar se há assinatura
-    if (isSignatureEmpty()) {
-      const signatureContainer = document.querySelector('.signature-container');
-      signatureContainer.style.borderColor = '#e53935';
-      signatureContainer.style.background = 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)';
-      signatureContainer.style.animation = 'shake 0.5s';
+        <div class="data-item">
+          <label>ENDEREÇO WMS</label>
+          <div class="data-value" id="confirmEndereco"></div>
+        </div>
+        
+        <div class="data-item">
+          <label>ENDEREÇO TRATADO?</label>
+          <div class="data-value" id="confirmEnderecoTratado"></div>
+        </div>
+        
+        <div class="data-item">
+          <label>NOTA</label>
+          <div class="data-value large" id="confirmNota"></div>
+        </div>
+        
+        <div class="data-item full-width">
+          <label>MENSAGEM</label>
+          <div class="data-value" id="confirmMensagem"></div>
+        </div>
+      </div>
       
-      setTimeout(() => {
-        signatureContainer.style.borderColor = '';
-        signatureContainer.style.background = '';
-        signatureContainer.style.animation = '';
-      }, 2000);
+      <div class="signature-display">
+        <div class="signature-label-text">
+          ASSINATURA DO COLABORADOR
+        </div>
+        <div class="signature-preview-box" id="signaturePreviewContainer">
+          <img id="confirmAssinatura" src="" alt="Assinatura" style="display: none;">
+          <div class="no-signature" id="noSignatureText">Assinatura não fornecida</div>
+        </div>
+      </div>
       
-      Swal.fire({
-        icon: 'warning',
-        title: 'Assinatura Requerida',
-        text: 'Por favor, solicite ao colaborador que assine antes de enviar.',
-        confirmButtonColor: '#ff6f00'
-      });
-      return;
-    }
-
-    const btn = document.getElementById('btnEnviar');
-    const loader = document.getElementById('loader');
+      <div class="warning-box">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div class="warning-content">
+          <h4>ATENÇÃO</h4>
+          <p>Verifique se todos os dados estão corretos antes de confirmar. Após o envio, não será possível alterar as informações.</p>
+        </div>
+      </div>
+    </div>
     
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-    loader.style.display = "block";
+    <div class="modal-actions">
+      <button type="button" class="modal-btn modal-btn-cancel" id="btnCancelar">
+        <i class="fas fa-edit"></i> Corrigir Dados
+      </button>
+      <button type="button" class="modal-btn modal-btn-confirm" id="btnConfirmar">
+        <i class="fas fa-check-double"></i> Confirmar Envio
+      </button>
+    </div>
+  </div>
+</div>
 
-    const formData = {
-      gestor: document.getElementById('gestor').value,
-      colaborador: document.getElementById('colaborador').value,
-      tipo: document.getElementById('tipo').value,
-      nota: document.getElementById('nota').value,
-      mensagem: document.getElementById('mensagem').value,
-      assinatura: canvas.toDataURL('image/png'),
-      usuario: usuarioLogado.email
-    };
-
-    // Enviar com timeout
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Tempo limite excedido. Tente novamente.')), 30000);
-    });
-
-    Promise.race([
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8',
-        },
-        body: JSON.stringify(formData)
-      }),
-      timeoutPromise
-    ])
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      if(data.result === "success") {
-        // Feedback bem-sucedido
-        btn.innerHTML = '<i class="fas fa-check"></i> Enviado com Sucesso!';
-        btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
-        
-        // Mostrar mensagem de sucesso
-        Swal.fire({
-          icon: 'success',
-          title: 'Feedback Registrado!',
-          text: 'O feedback foi salvo no sistema com sucesso.',
-          confirmButtonColor: '#4caf50',
-          confirmButtonText: 'OK'
-        });
-        
-        // Limpar formulário após 2 segundos
-        setTimeout(() => {
-          document.getElementById('feedbackForm').reset();
-          clearSignature();
-          updateNotaDisplay(5); // Resetar nota para 5
-          btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Feedback';
-          btn.style.background = '';
-          btn.disabled = false;
-          loader.style.display = "none";
-        }, 2000);
-      } else {
-        throw new Error(data.error || "Erro desconhecido");
-      }
-    })
-    .catch(error => {
-      console.error('Erro ao enviar:', error);
-      
-      // Mostrar mensagem de erro
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao Enviar',
-        html: `<div style="text-align: left;">
-                <p>${error.message || 'Ocorreu um erro ao enviar o feedback.'}</p>
-                <p style="font-size: 12px; color: #666; margin-top: 10px;">
-                  <i class="fas fa-lightbulb"></i> Dica: Verifique sua conexão e tente novamente.
-                </p>
-              </div>`,
-        confirmButtonColor: '#e53935',
-        confirmButtonText: 'Entendi'
-      });
-    })
-    .finally(() => {
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Registrar Feedback';
-        loader.style.display = "none";
-      }, 3000);
-    });
-  });
-
-  // Adicionar SweetAlert2 para alertas mais bonitos
-  const Swal = {
-    fire: function(options) {
-      if (typeof swal === 'undefined') {
-        alert(options.title + (options.text ? '\n' + options.text : ''));
-        return { isConfirmed: true };
-      }
-      return swal.fire(options);
-    }
-  };
-
-  // Redimensionar canvas quando a janela for redimensionada
-  window.addEventListener('resize', function() {
-    if (canvas) {
-      resizeCanvas();
-    }
-  });
-
-  // Adicionar animação de shake
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-      20%, 40%, 60%, 80% { transform: translateX(5px); }
-    }
-  `;
-  document.head.appendChild(style);
-
-  // Adicionar funcionalidade de limpar assinatura com ESC
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      clearSignature();
-    }
-  });
-
-  // Adicionar placeholder dinâmico para o campo de gestor
-  document.getElementById('gestor').addEventListener('focus', function() {
-    if (usuarioLogado && !this.value) {
-      this.placeholder = `Ex: ${usuarioLogado.nome} (se for você)`;
-    }
-  });
-  
-  document.getElementById('gestor').addEventListener('blur', function() {
-    this.placeholder = "Quem está aplicando o feedback?";
-  });
-</script>
-
-<!-- SweetAlert2 para alertas bonitos -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<script src="script.js"></script>
 </body>
 </html>
