@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHjliamfyBfksrn2GjCR71o5Y9-gkHvJ3xqXMmSunRDtmbwcx8wbgJyaDY2AlgUsqz-Q/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxVTkHWKEDVXyWo1pgExJJPuCd62zI0WZdYt0Pk19Qw6C-2lnewlwZqxSdQrNKsMe60dg/exec";
   
 // Estado do sistema
 let usuarioLogado = null;
