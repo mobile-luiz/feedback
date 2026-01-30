@@ -1611,6 +1611,11 @@ async function exportarFeedbacksPDF() {
   });
   
   try {
+    // Verificar se jsPDF está disponível
+    if (typeof jspdf === 'undefined') {
+      throw new Error('Biblioteca jsPDF não carregada');
+    }
+    
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({
       orientation: 'portrait',
@@ -1619,8 +1624,30 @@ async function exportarFeedbacksPDF() {
     });
     
     const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
     const margin = 15;
     const contentWidth = pageWidth - (margin * 2);
+    
+    // FUNÇÃO AUXILIAR: Converter qualquer valor para string segura
+    const safeText = (value) => {
+      if (value === null || value === undefined || value === '') {
+        return 'N/A';
+      }
+      if (typeof value === 'number') {
+        return value.toString();
+      }
+      if (typeof value === 'boolean') {
+        return value ? 'Sim' : 'Não';
+      }
+      if (typeof value === 'object') {
+        try {
+          return JSON.stringify(value);
+        } catch {
+          return '[Objeto]';
+        }
+      }
+      return String(value).trim();
+    };
     
     // Determinar quais feedbacks exportar
     let feedbacksToExport;
@@ -1628,41 +1655,51 @@ async function exportarFeedbacksPDF() {
     let startIndex;
     let endIndex;
     
+    // Usar valores padrão se as variáveis não existirem
+    const currentPage = window.currentFeedbacksPage || 1;
+    const perPage = window.feedbacksPerPage || 10;
+    
     if (exportType === 'current') {
       // Pega apenas os feedbacks da página atual
-      startIndex = (currentFeedbacksPage - 1) * feedbacksPerPage;
-      endIndex = Math.min(startIndex + feedbacksPerPage, meusFeedbacks.length);
+      startIndex = (currentPage - 1) * perPage;
+      endIndex = Math.min(startIndex + perPage, meusFeedbacks.length);
       feedbacksToExport = meusFeedbacks.slice(startIndex, endIndex);
-      exportInfo = `Página ${currentFeedbacksPage} (${feedbacksToExport.length} feedbacks)`;
+      exportInfo = `Página ${currentPage} (${feedbacksToExport.length} feedbacks)`;
     } else {
       // Pega todos os feedbacks
       feedbacksToExport = meusFeedbacks;
       exportInfo = `Todos os feedbacks (${feedbacksToExport.length} no total)`;
     }
     
-    // Cabeçalho
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(229, 57, 53);
-    doc.text('RELATÓRIO DE FEEDBACKS', pageWidth / 2, margin, { align: 'center' });
+    // Função para adicionar cabeçalho em todas as páginas
+    const addHeader = () => {
+      // Cabeçalho
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(229, 57, 53);
+      doc.text('RELATÓRIO DE FEEDBACKS', pageWidth / 2, margin, { align: 'center' });
+      
+      // Informações
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, margin, margin + 8);
+      doc.text(`Usuário: ${safeText(usuarioLogado?.nome || 'Usuário')}`, margin, margin + 13);
+      doc.text(safeText(exportInfo), pageWidth - margin, margin + 8, { align: 'right' });
+      
+      // Adicionar informações específicas se for página atual
+      if (exportType === 'current') {
+        doc.text(`Posição: ${startIndex + 1} a ${endIndex} de ${meusFeedbacks.length}`, pageWidth - margin, margin + 13, { align: 'right' });
+      }
+      
+      // Linha divisória
+      doc.setDrawColor(229, 57, 53);
+      doc.setLineWidth(0.5);
+      doc.line(margin, margin + 18, pageWidth - margin, margin + 18);
+    };
     
-    // Informações
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, margin, margin + 8);
-    doc.text(`Usuário: ${usuarioLogado.nome}`, margin, margin + 13);
-    doc.text(`${exportInfo}`, pageWidth - margin, margin + 8, { align: 'right' });
-    
-    // Adicionar informações específicas se for página atual
-    if (exportType === 'current') {
-      doc.text(`Posição: ${startIndex + 1} a ${endIndex} de ${meusFeedbacks.length}`, pageWidth - margin, margin + 13, { align: 'right' });
-    }
-    
-    // Linha divisória
-    doc.setDrawColor(229, 57, 53);
-    doc.setLineWidth(0.5);
-    doc.line(margin, margin + 18, pageWidth - margin, margin + 18);
+    // Adicionar cabeçalho na primeira página
+    addHeader();
     
     let yPosition = margin + 25;
     
@@ -1678,15 +1715,34 @@ async function exportarFeedbacksPDF() {
       return;
     }
     
-    // Adicionar cada feedback
-    feedbacksToExport.forEach((feedback, index) => {
-      if (yPosition > doc.internal.pageSize.height - 30) {
+    // Adicionar cada feedback - usando for loop em vez de forEach para melhor controle
+    for (let index = 0; index < feedbacksToExport.length; index++) {
+      const feedback = feedbacksToExport[index];
+      
+      // Verificar se precisa de nova página
+      if (yPosition > pageHeight - 30) {
         doc.addPage();
         yPosition = margin;
+        // Adicionar cabeçalho na nova página
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(229, 57, 53);
+        doc.text('RELATÓRIO DE FEEDBACKS', pageWidth / 2, margin, { align: 'center' });
+        yPosition = margin + 25;
       }
       
-      const dataFormatada = new Date(feedback.data).toLocaleDateString('pt-BR');
-      const horaFormatada = new Date(feedback.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      // Formatar data e hora com tratamento de erro
+      let dataFormatada = 'Data inválida';
+      let horaFormatada = '';
+      try {
+        const dataObj = new Date(feedback.data);
+        if (!isNaN(dataObj.getTime())) {
+          dataFormatada = dataObj.toLocaleDateString('pt-BR');
+          horaFormatada = dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+      } catch (e) {
+        console.warn('Erro ao formatar data:', e);
+      }
       
       // Determinar número do feedback
       let feedbackNumber;
@@ -1702,71 +1758,73 @@ async function exportarFeedbacksPDF() {
       doc.setTextColor(33, 33, 33);
       doc.text(`Feedback #${feedbackNumber}`, margin, yPosition);
       
-      // Data e hora
+      // Data e hora - USAR safeText() aqui
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(100, 100, 100);
-      doc.text(`${dataFormatada} ${horaFormatada}`, pageWidth - margin, yPosition, { align: 'right' });
+      const dataHoraTexto = horaFormatada ? `${dataFormatada} ${horaFormatada}` : dataFormatada;
+      doc.text(safeText(dataHoraTexto), pageWidth - margin, yPosition, { align: 'right' });
       
       yPosition += 7;
       
-      // Informações
+      // Informações - Colaborador
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      doc.text('CAD:', margin, yPosition);
+      doc.text('Colaborador:', margin, yPosition);
       doc.setFont('helvetica', 'normal');
-      doc.text(feedback.cad || 'N/A', margin + 15, yPosition);
       
-      doc.setFont('helvetica', 'bold');
-      doc.text('Tipo:', margin + contentWidth / 2, yPosition);
-      doc.setFont('helvetica', 'normal');
-      doc.text(feedback.tipo, margin + contentWidth / 2 + 12, yPosition);
-      
-      yPosition += 6;
-      
-      // Colaborador
-      let colaboradorNome = feedback.colaborador;
-      if (feedback.colaborador && feedback.colaborador.includes('-')) {
+      // Extrair nome do colaborador
+      let colaboradorNome = safeText(feedback.colaborador);
+      if (feedback.colaborador && typeof feedback.colaborador === 'string' && feedback.colaborador.includes('-')) {
         const parts = feedback.colaborador.split('-');
         if (parts.length > 1) {
           colaboradorNome = parts.slice(1).join('-').trim();
         }
       }
       
-      doc.setFont('helvetica', 'bold');
-      doc.text('Colaborador:', margin, yPosition);
-      doc.setFont('helvetica', 'normal');
       const colaboradorTexto = doc.splitTextToSize(colaboradorNome, contentWidth / 2);
-      doc.text(colaboradorTexto, margin + 25, yPosition);
+      doc.text(colaboradorTexto, margin + 20, yPosition);
+      
+      // Tipo - USAR safeText() aqui
+      doc.setFont('helvetica', 'bold');
+      doc.text('Tipo:', margin + contentWidth / 2, yPosition);
+      doc.setFont('helvetica', 'normal');
+      doc.text(safeText(feedback.tipo), margin + contentWidth / 2 + 12, yPosition);
+      
+      yPosition += Math.max(colaboradorTexto.length * 4, 6);
+      
+      // Endereço WMS e Status - USAR safeText() aqui
+      doc.setFont('helvetica', 'bold');
+      doc.text('Endereço WMS:', margin, yPosition);
+      doc.setFont('helvetica', 'normal');
+      doc.text(safeText(feedback.endereco), margin + 28, yPosition);
       
       doc.setFont('helvetica', 'bold');
-      doc.text('Endereço WMS:', margin + contentWidth / 2, yPosition);
+      doc.text('Status:', margin + contentWidth / 2, yPosition);
       doc.setFont('helvetica', 'normal');
-      doc.text(feedback.endereco || 'N/A', margin + contentWidth / 2 + 28, yPosition);
+      doc.text(safeText(feedback.status), margin + contentWidth / 2 + 15, yPosition);
       
       yPosition += 6;
       
+      // Nota - Converter para número primeiro
       doc.setFont('helvetica', 'bold');
-      doc.text('Status:', margin, yPosition);
-      doc.setFont('helvetica', 'normal');
-      doc.text(feedback.status || 'N/A', margin + 15, yPosition);
-      
-      doc.setFont('helvetica', 'bold');
-      doc.text('Nota:', margin + contentWidth / 2, yPosition);
+      doc.text('Nota:', margin, yPosition);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(229, 57, 53);
-      doc.text(`${feedback.nota}/10`, margin + contentWidth / 2 + 15, yPosition);
+      const nota = feedback.nota !== undefined ? Number(feedback.nota) : 0;
+      doc.text(`${nota}/10`, margin + 15, yPosition);
+      doc.setTextColor(33, 33, 33); // Resetar cor
       
       yPosition += 6;
       
-      // Descrição (limitada)
-      let descricao = feedback.mensagem || 'Sem descrição';
+      // Descrição - USAR safeText() aqui
+      let descricao = feedback.mensagem || feedback.descricao || 'Sem descrição';
       
       doc.setFontSize(8);
       doc.setFont('helvetica', 'italic');
       doc.setTextColor(100, 100, 100);
       
-      const descricaoLines = doc.splitTextToSize(descricao, contentWidth - 10);
+      const descricaoLines = doc.splitTextToSize(safeText(descricao), contentWidth - 10);
       doc.text(descricaoLines, margin + 5, yPosition);
       
       yPosition += descricaoLines.length * 4 + 10;
@@ -1775,10 +1833,10 @@ async function exportarFeedbacksPDF() {
       doc.setDrawColor(224, 224, 224);
       doc.setLineWidth(0.2);
       doc.line(margin, yPosition - 5, pageWidth - margin, yPosition - 5);
-    });
+    }
     
     // Adicionar estatísticas se tiver espaço
-    if (yPosition < doc.internal.pageSize.height - 40) {
+    if (yPosition < pageHeight - 40) {
       yPosition += 10;
       
       // Linha divisória para estatísticas
@@ -1796,10 +1854,13 @@ async function exportarFeedbacksPDF() {
       yPosition += 7;
       
       // Calcular estatísticas
-      const notas = feedbacksToExport.map(f => parseInt(f.nota));
-      const media = notas.reduce((a, b) => a + b, 0) / notas.length;
-      const maxNota = Math.max(...notas);
-      const minNota = Math.min(...notas);
+      const notas = feedbacksToExport.map(f => {
+        const nota = Number(f.nota);
+        return isNaN(nota) ? 0 : nota;
+      });
+      const media = notas.length > 0 ? notas.reduce((a, b) => a + b, 0) / notas.length : 0;
+      const maxNota = notas.length > 0 ? Math.max(...notas) : 0;
+      const minNota = notas.length > 0 ? Math.min(...notas) : 0;
       
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
@@ -1820,7 +1881,7 @@ async function exportarFeedbacksPDF() {
       doc.text(
         `Página ${i} de ${totalPages}`,
         pageWidth / 2,
-        doc.internal.pageSize.height - 10,
+        pageHeight - 10,
         { align: 'center' }
       );
     }
@@ -1830,12 +1891,21 @@ async function exportarFeedbacksPDF() {
     // Nome do arquivo
     const now = new Date();
     const dateStr = now.toISOString().split('T')[0];
+    const timeStr = now.getHours().toString().padStart(2, '0') + 
+                   now.getMinutes().toString().padStart(2, '0');
     let fileName;
     
+    // Limpar nome do usuário para nome de arquivo seguro
+    const safeUserName = safeText(usuarioLogado?.nome || 'usuario')
+      .replace(/\s+/g, '_')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\w\s]/gi, '');
+    
     if (exportType === 'current') {
-      fileName = `feedbacks_pagina_${currentFeedbacksPage}_${usuarioLogado.nome.replace(/\s+/g, '_')}_${dateStr}.pdf`;
+      fileName = `feedbacks_pagina_${currentPage}_${safeUserName}_${dateStr}_${timeStr}.pdf`;
     } else {
-      fileName = `feedbacks_todos_${usuarioLogado.nome.replace(/\s+/g, '_')}_${dateStr}.pdf`;
+      fileName = `feedbacks_todos_${safeUserName}_${dateStr}_${timeStr}.pdf`;
     }
     
     doc.save(fileName);
@@ -1847,26 +1917,39 @@ async function exportarFeedbacksPDF() {
               <p><strong>Arquivo:</strong> ${fileName}</p>
               <p><strong>Feedbacks exportados:</strong> ${feedbacksToExport.length}</p>
               <p><strong>Tipo de exportação:</strong> ${exportType === 'current' ? 'Página atual' : 'Todos os feedbacks'}</p>
-              ${exportType === 'current' ? `<p><strong>Página:</strong> ${currentFeedbacksPage}</p>` : ''}
+              ${exportType === 'current' ? `<p><strong>Página:</strong> ${currentPage}</p>` : ''}
               <p style="font-size: 12px; color: #666; margin-top: 10px;">
                 <i class="fas fa-info-circle"></i> O arquivo foi baixado automaticamente.
               </p>
             </div>`,
-      confirmButtonColor: '#4caf50'
+      confirmButtonColor: '#4caf50',
+      width: '500px'
     });
     
   } catch (error) {
     console.error('Erro ao gerar PDF:', error);
+    console.error('Stack trace:', error.stack);
     loadingSwal.close();
     
     Swal.fire({
       icon: 'error',
       title: 'Erro ao Gerar PDF',
-      text: 'Ocorreu um erro ao gerar o arquivo PDF. Tente novamente.',
-      confirmButtonColor: '#e53935'
+      html: `<div style="text-align: left; padding: 10px;">
+              <p>Ocorreu um erro ao gerar o arquivo PDF.</p>
+              <p><strong>Detalhes:</strong> ${error.message}</p>
+              <p><strong>Solução:</strong> Verifique se todos os campos dos feedbacks contêm dados válidos.</p>
+              ${error.message.includes('200') ? 
+                `<p style="color: #d32f2f; font-size: 12px; background: #ffebee; padding: 8px; border-radius: 4px;">
+                  <strong>Erro específico:</strong> O valor "200" foi encontrado em algum campo numérico.<br>
+                  Certifique-se de que todos os valores numéricos são tratados corretamente.
+                </p>` : ''}
+            </div>`,
+      confirmButtonColor: '#e53935',
+      width: '550px'
     });
   }
 }
+
 
 // ===== EVENTOS ADICIONAIS =====
 document.addEventListener('keydown', function(e) {
