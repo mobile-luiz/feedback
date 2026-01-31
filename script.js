@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxVTkHWKEDVXyWo1pgExJJPuCd62zI0WZdYt0Pk19Qw6C-2lnewlwZqxSdQrNKsMe60dg/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySOiRg_q9xsFqeWTSk3X0OMiJgVIVWuTtt_w1mxVk1NI_kLHQ2om0cxJCOzekoNBPyeA/exec";
   
 // Estado do sistema
 let usuarioLogado = null;
@@ -551,6 +551,10 @@ function preencherModalConfirmacao() {
   document.getElementById('confirmCAD').textContent = document.getElementById('cad').value;
   document.getElementById('confirmGestor').textContent = document.getElementById('gestor').value || "Não informado";
   document.getElementById('confirmColaborador').textContent = document.getElementById('colaborador').value || "Não selecionado";
+  
+  // NOVO CAMPO: Processo
+  document.getElementById('confirmProcesso').textContent = document.getElementById('processo').value || "Não selecionado";
+  
   document.getElementById('confirmTipo').textContent = document.getElementById('tipo').value || "Não selecionado";
   document.getElementById('confirmEndereco').textContent = document.getElementById('endereco').value || "Não informado";
   document.getElementById('confirmEnderecoTratado').textContent = document.getElementById('enderecoTratado').value || "Não selecionado";
@@ -619,6 +623,42 @@ function carregarColaboradores() {
     });
 }
 
+// ===== FUNÇÃO PARA FILTRAR TIPOS POR PROCESSO =====
+// ===== FUNÇÃO PARA CARREGAR TODOS OS TIPOS (SEM FILTRO) =====
+function filtrarTiposPorProcesso() {
+  const tipoSelect = document.getElementById('tipo');
+  
+  // Se já houver opções (além da padrão), não precisa recarregar
+  if (tipoSelect.options.length > 1) return;
+
+  // Lista única com TODOS os tipos possíveis
+  const todosOsTipos = [
+    { value: 'Qualidade Putaway', label: '📦 Qualidade Putaway' },
+    { value: 'Sugestão de Melhoria', label: '💡 Sugestão de Melhoria' },
+    { value: 'Limite de SKU\'s', label: '🔢 Limite de SKU\'s' },
+    { value: 'Sobra', label: '➕ Sobra' },
+    { value: 'Falta', label: '➖ Falta' },
+    { value: 'Embalagens', label: '🛍️ Embalagens' },
+    { value: 'OB Verdadeiro - PNE', label: '✅ OB Verdadeiro - PNE' },
+    { value: 'OB Verdadeiro - PE', label: '✅ OB Verdadeiro - PE' },
+    { value: 'OB Falso', label: '❌ OB Falso' }
+  ];
+
+  // Limpar e Adicionar todas as opções
+  tipoSelect.innerHTML = '<option value="">Selecione o tipo de feedback...</option>';
+  
+  todosOsTipos.forEach(tipo => {
+    const option = document.createElement('option');
+    option.value = tipo.value;
+    option.text = tipo.label;
+    tipoSelect.appendChild(option);
+  });
+
+  // Manter sempre habilitado
+  tipoSelect.disabled = false;
+  tipoSelect.style.background = "white";
+}
+
 // ===== LÓGICA PRINCIPAL DE ENVIO COM MODAL =====
 document.getElementById('feedbackForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -632,6 +672,32 @@ document.getElementById('feedbackForm').addEventListener('submit', function(e) {
   
   if (isSignatureEmpty()) {
     mostrarErroAssinatura();
+    return;
+  }
+  
+  // Verificar se o processo foi selecionado
+  const processo = document.getElementById('processo').value;
+  if (!processo) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Processo Não Selecionado',
+      text: 'Por favor, selecione um processo antes de continuar.',
+      confirmButtonColor: '#ff6f00'
+    });
+    document.getElementById('processo').focus();
+    return;
+  }
+  
+  // Verificar se o tipo foi selecionado
+  const tipo = document.getElementById('tipo').value;
+  if (!tipo) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Tipo Não Selecionado',
+      text: 'Por favor, selecione um tipo de feedback.',
+      confirmButtonColor: '#ff6f00'
+    });
+    document.getElementById('tipo').focus();
     return;
   }
   
@@ -676,6 +742,7 @@ async function enviarFeedback() {
       cad: document.getElementById('cad').value,
       gestor: document.getElementById('gestor').value,
       colaborador: document.getElementById('colaborador').value,
+      processo: document.getElementById('processo').value, // NOVO CAMPO
       tipo: document.getElementById('tipo').value,
       endereco: document.getElementById('endereco').value,
       enderecoTratado: document.getElementById('enderecoTratado').value,
@@ -774,6 +841,11 @@ function limparFormulario() {
   clearSignature();
   updateNotaDisplay(5);
   document.getElementById('colaborador').disabled = false;
+  
+  // Resetar o filtro de tipos
+  document.getElementById('tipo').innerHTML = '<option value="">Selecione primeiro o processo...</option>';
+  document.getElementById('tipo').disabled = true;
+  document.getElementById('tipo').style.background = "#f5f5f5";
 }
 
 function mostrarErroSessao() {
@@ -864,7 +936,7 @@ async function carregarMeusFeedbacks() {
   
   feedbacksTableBody.innerHTML = `
     <tr>
-      <td colspan="7" style="text-align: center; padding: 30px;">
+      <td colspan="8" style="text-align: center; padding: 30px;">
         <div class="loader" style="display: block;">
           <i class="fas fa-circle-notch"></i>
           Carregando seus feedbacks...
@@ -936,6 +1008,11 @@ function renderizarFeedbacksMobile() {
           <div class="info-item">
             <div class="info-label">Colaborador</div>
             <div class="info-value">${colaboradorNome}</div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-label">Processo</div>
+            <div class="info-value">${feedback.processo || 'N/A'}</div>
           </div>
           
           <div class="info-item">
@@ -1013,6 +1090,7 @@ function renderizarFeedbacksDesktop() {
         </td>
         <td>${feedback.cad || 'N/A'}</td>
         <td>${colaboradorNome}</td>
+        <td>${feedback.processo || 'N/A'}</td>
         <td>
           <span class="feedback-badge" style="background: ${getCorPorTipo(feedback.tipo)};">
             ${feedback.tipo}
@@ -1054,7 +1132,7 @@ function mostrarFeedbacksVazios() {
   
   feedbacksTableBody.innerHTML = `
     <tr>
-      <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-light);">
+      <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-light);">
         <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px; color: #e0e0e0; display: block;"></i>
         <h4 style="margin-bottom: 10px; color: var(--text-light);">Nenhum feedback encontrado</h4>
         <p style="font-size: 14px;">Você ainda não registrou nenhum feedback no sistema.</p>
@@ -1083,7 +1161,7 @@ function mostrarErroFeedbacks(error) {
   
   feedbacksTableBody.innerHTML = `
     <tr>
-      <td colspan="7" style="text-align: center; padding: 40px; color: var(--shoppe-red);">
+      <td colspan="8" style="text-align: center; padding: 40px; color: var(--shoppe-red);">
         <i class="fas fa-exclamation-triangle" style="font-size: 40px; margin-bottom: 15px; display: block;"></i>
         <h4 style="margin-bottom: 10px; color: var(--shoppe-red);">Erro ao carregar feedbacks</h4>
         <p style="font-size: 14px;">${error.message || 'Não foi possível carregar seus feedbacks.'}</p>
@@ -1287,6 +1365,7 @@ function renderizarGraficos() {
   
   // Dados para gráficos
   const tipoCounts = {};
+  const processoCounts = {};
   const notaCounts = {};
   const statusCounts = {};
   const notasPorMes = {};
@@ -1294,6 +1373,9 @@ function renderizarGraficos() {
   meusFeedbacks.forEach(feedback => {
     // Contagem por tipo
     tipoCounts[feedback.tipo] = (tipoCounts[feedback.tipo] || 0) + 1;
+    
+    // Contagem por processo
+    processoCounts[feedback.processo] = (processoCounts[feedback.processo] || 0) + 1;
     
     // Contagem por nota
     const nota = parseInt(feedback.nota);
@@ -1322,7 +1404,28 @@ function renderizarGraficos() {
     '#9c5935', '#a9c413', '#2a778d', '#668d1c', '#bea413', '#0c5922'
   ];
 
-  // Gráfico 1: Distribuição por Tipo de Feedback
+  // Gráfico 1: Distribuição por Processo
+  const processosLabels = Object.keys(processoCounts);
+  const processosData = Object.values(processoCounts);
+  
+  // Gera cores para processos
+  const processosCores = processosLabels.map((processo, index) => {
+    const corPadrao = getCorPorProcesso(processo);
+    return corPadrao || paletaExtra[index % paletaExtra.length];
+  });
+  
+  chartsGrid.innerHTML += `
+    <div class="chart-container">
+      <div class="chart-header">
+        <h4><i class="fas fa-cogs"></i> Distribuição por Processo</h4>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="chartProcessos"></canvas>
+      </div>
+    </div>
+  `;
+  
+  // Gráfico 2: Distribuição por Tipo de Feedback
   const tiposLabels = Object.keys(tipoCounts);
   const tiposData = Object.values(tipoCounts);
   
@@ -1346,7 +1449,7 @@ function renderizarGraficos() {
     </div>
   `;
   
-  // Gráfico 2: Distribuição por Nota
+  // Gráfico 3: Distribuição por Nota
   const notasLabels = Object.keys(notaCounts).sort((a, b) => a - b);
   const notasData = notasLabels.map(nota => notaCounts[nota]);
   const notasCores = notasLabels.map(nota => getCorPorNotaCSS(parseInt(nota)));
@@ -1362,7 +1465,7 @@ function renderizarGraficos() {
     </div>
   `;
   
-  // Gráfico 3: Status dos Endereços
+  // Gráfico 4: Status dos Endereços
   const statusLabels = Object.keys(statusCounts);
   const statusData = Object.values(statusCounts);
   const statusCores = statusLabels.map(status => getCorPorStatus(status));
@@ -1378,7 +1481,7 @@ function renderizarGraficos() {
     </div>
   `;
   
-  // Gráfico 4: Evolução da Nota Média por Mês
+  // Gráfico 5: Evolução da Nota Média por Mês
   const mesesLabels = Object.keys(notasPorMes).sort((a, b) => {
     const [mesA, anoA] = a.split('/').map(Number);
     const [mesB, anoB] = b.split('/').map(Number);
@@ -1401,6 +1504,36 @@ function renderizarGraficos() {
   
   // Renderizar gráficos após o DOM ser atualizado
   setTimeout(() => {
+    // Gráfico de pizza - Processos
+    new Chart(document.getElementById('chartProcessos'), {
+      type: 'pie',
+      data: {
+        labels: processosLabels,
+        datasets: [{
+          data: processosData,
+          backgroundColor: processosCores,
+          borderWidth: 1,
+          borderColor: '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: window.innerWidth < 768 ? 'bottom' : 'right',
+            labels: {
+              padding: 15,
+              usePointStyle: true,
+              font: {
+                size: window.innerWidth < 768 ? 10 : 11
+              }
+            }
+          }
+        }
+      }
+    });
+    
     // Gráfico de pizza - Tipos
     new Chart(document.getElementById('chartTipos'), {
       type: 'pie',
@@ -1536,6 +1669,16 @@ function renderizarGraficos() {
 }
 
 // ===== FUNÇÕES AUXILIARES PARA CORES =====
+function getCorPorProcesso(processo) {
+  const cores = {
+    'Putaway': '#9c27b0',
+    'Rack Transfer': '#2196f3',
+    'Checking': '#ff9800',
+    'OB Picking': '#4caf50'
+  };
+  return cores[processo] || '#757575';
+}
+
 function getCorPorTipo(tipo) {
   const cores = {
     'Qualidade Putaway': '#9c27b0',
@@ -1628,10 +1771,19 @@ async function exportarFeedbacksPDF() {
     const margin = 15;
     const contentWidth = pageWidth - (margin * 2);
     
+    // CONSTANTES DE LAYOUT
+    const LINE_HEIGHT = 5;
+    const FIELD_LABEL_WIDTH = 25;
+    const COLUNA_LARGURA = contentWidth / 3;
+    const TEXTO_LARGURA = COLUNA_LARGURA - FIELD_LABEL_WIDTH;
+    
     // FUNÇÃO AUXILIAR: Converter qualquer valor para string segura
     const safeText = (value) => {
-      if (value === null || value === undefined || value === '') {
+      if (value === null || value === undefined) {
         return 'N/A';
+      }
+      if (value === '') {
+        return '-';
       }
       if (typeof value === 'number') {
         return value.toString();
@@ -1671,8 +1823,12 @@ async function exportarFeedbacksPDF() {
       exportInfo = `Todos os feedbacks (${feedbacksToExport.length} no total)`;
     }
     
+    // Obter informações do usuário logado
+    const usuarioNome = safeText(usuarioLogado?.nome || 'Usuário');
+    const usuarioEmail = safeText(usuarioLogado?.email || '');
+    
     // Função para adicionar cabeçalho em todas as páginas
-    const addHeader = () => {
+    const addHeader = (pageNum) => {
       // Cabeçalho
       doc.setFontSize(18);
       doc.setFont('helvetica', 'bold');
@@ -1683,25 +1839,56 @@ async function exportarFeedbacksPDF() {
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(100, 100, 100);
+      
+      // Coluna esquerda - Informações do usuário
       doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, margin, margin + 8);
-      doc.text(`Usuário: ${safeText(usuarioLogado?.nome || 'Usuário')}`, margin, margin + 13);
+      
+      // Mostrar nome e email do usuário
+      let usuarioInfo = `Usuário: ${usuarioNome}`;
+      if (usuarioEmail && usuarioEmail !== 'N/A' && usuarioEmail !== '-') {
+        usuarioInfo += ` (${usuarioEmail})`;
+      }
+      
+      // Se o texto for muito longo, dividir em duas linhas
+      const usuarioInfoLines = doc.splitTextToSize(usuarioInfo, contentWidth / 2 - 5);
+      
+      if (usuarioInfoLines.length === 1) {
+        // Caber em uma linha
+        doc.text(usuarioInfoLines[0], margin, margin + 13);
+      } else {
+        // Dividir em duas linhas
+        doc.text(usuarioInfoLines[0], margin, margin + 13);
+        doc.text(usuarioInfoLines[1], margin, margin + 18);
+      }
+      
+      // Coluna direita - Informações da exportação
       doc.text(safeText(exportInfo), pageWidth - margin, margin + 8, { align: 'right' });
       
       // Adicionar informações específicas se for página atual
       if (exportType === 'current') {
-        doc.text(`Posição: ${startIndex + 1} a ${endIndex} de ${meusFeedbacks.length}`, pageWidth - margin, margin + 13, { align: 'right' });
+        const posicaoTexto = `Posição: ${startIndex + 1} a ${endIndex} de ${meusFeedbacks.length}`;
+        const posicaoY = usuarioInfoLines.length === 1 ? margin + 13 : margin + 18;
+        doc.text(posicaoTexto, pageWidth - margin, posicaoY, { align: 'right' });
       }
       
       // Linha divisória
       doc.setDrawColor(229, 57, 53);
       doc.setLineWidth(0.5);
-      doc.line(margin, margin + 18, pageWidth - margin, margin + 18);
+      const linhaY = usuarioInfoLines.length === 1 ? margin + 18 : margin + 23;
+      doc.line(margin, linhaY, pageWidth - margin, linhaY);
     };
     
     // Adicionar cabeçalho na primeira página
-    addHeader();
+    addHeader(1);
     
     let yPosition = margin + 25;
+    
+    // Ajustar yPosition baseado no tamanho do cabeçalho
+    const usuarioInfo = `Usuário: ${usuarioNome}${usuarioEmail && usuarioEmail !== 'N/A' && usuarioEmail !== '-' ? ` (${usuarioEmail})` : ''}`;
+    const usuarioInfoLines = doc.splitTextToSize(usuarioInfo, contentWidth / 2 - 5);
+    if (usuarioInfoLines.length > 1) {
+      yPosition += 5; // Adicionar espaço extra se o cabeçalho tiver duas linhas
+    }
     
     // Verificar se há feedbacks para exportar
     if (feedbacksToExport.length === 0) {
@@ -1715,24 +1902,25 @@ async function exportarFeedbacksPDF() {
       return;
     }
     
-    // Adicionar cada feedback - usando for loop em vez de forEach para melhor controle
+    // Adicionar cada feedback
     for (let index = 0; index < feedbacksToExport.length; index++) {
       const feedback = feedbacksToExport[index];
       
       // Verificar se precisa de nova página
-      if (yPosition > pageHeight - 30) {
+      if (yPosition > pageHeight - 60) {
         doc.addPage();
         yPosition = margin;
-        // Adicionar cabeçalho na nova página
-        doc.setFontSize(18);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(229, 57, 53);
-        doc.text('RELATÓRIO DE FEEDBACKS', pageWidth / 2, margin, { align: 'center' });
+        addHeader(doc.internal.getNumberOfPages());
         yPosition = margin + 25;
+        
+        // Ajustar yPosition baseado no tamanho do cabeçalho na nova página
+        if (usuarioInfoLines.length > 1) {
+          yPosition += 5;
+        }
       }
       
       // Formatar data e hora com tratamento de erro
-      let dataFormatada = 'Data inválida';
+      let dataFormatada = '-';
       let horaFormatada = '';
       try {
         const dataObj = new Date(feedback.data);
@@ -1758,7 +1946,7 @@ async function exportarFeedbacksPDF() {
       doc.setTextColor(33, 33, 33);
       doc.text(`Feedback #${feedbackNumber}`, margin, yPosition);
       
-      // Data e hora - USAR safeText() aqui
+      // Data e hora alinhadas à direita
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(100, 100, 100);
@@ -1767,13 +1955,16 @@ async function exportarFeedbacksPDF() {
       
       yPosition += 7;
       
-      // Informações - Colaborador
+      // PRIMEIRA LINHA: Colaborador, Processo, Tipo
+      let maxLinhasLinha1 = 1;
+      
+      // Colaborador (coluna 1)
+      const colaboradorX = margin;
+      const colaboradorLabel = 'Colaborador';
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      doc.text('Colaborador:', margin, yPosition);
-      doc.setFont('helvetica', 'normal');
+      doc.text(colaboradorLabel + ':', colaboradorX, yPosition);
       
-      // Extrair nome do colaborador
       let colaboradorNome = safeText(feedback.colaborador);
       if (feedback.colaborador && typeof feedback.colaborador === 'string' && feedback.colaborador.includes('-')) {
         const parts = feedback.colaborador.split('-');
@@ -1782,108 +1973,185 @@ async function exportarFeedbacksPDF() {
         }
       }
       
-      const colaboradorTexto = doc.splitTextToSize(colaboradorNome, contentWidth / 2);
-      doc.text(colaboradorTexto, margin + 20, yPosition);
-      
-      // Tipo - USAR safeText() aqui
-      doc.setFont('helvetica', 'bold');
-      doc.text('Tipo:', margin + contentWidth / 2, yPosition);
       doc.setFont('helvetica', 'normal');
-      doc.text(safeText(feedback.tipo), margin + contentWidth / 2 + 12, yPosition);
+      const colaboradorLines = doc.splitTextToSize(colaboradorNome, TEXTO_LARGURA);
+      doc.text(colaboradorLines, colaboradorX + FIELD_LABEL_WIDTH, yPosition);
+      maxLinhasLinha1 = Math.max(maxLinhasLinha1, colaboradorLines.length);
       
-      yPosition += Math.max(colaboradorTexto.length * 4, 6);
-      
-      // Endereço WMS e Status - USAR safeText() aqui
+      // Processo (coluna 2)
+      const processoX = margin + COLUNA_LARGURA;
+      const processoLabel = 'Processo';
       doc.setFont('helvetica', 'bold');
-      doc.text('Endereço WMS:', margin, yPosition);
+      doc.text(processoLabel + ':', processoX, yPosition);
+      
       doc.setFont('helvetica', 'normal');
-      doc.text(safeText(feedback.endereco), margin + 28, yPosition);
+      const processoLines = doc.splitTextToSize(safeText(feedback.processo), TEXTO_LARGURA);
+      doc.text(processoLines, processoX + FIELD_LABEL_WIDTH, yPosition);
+      maxLinhasLinha1 = Math.max(maxLinhasLinha1, processoLines.length);
       
+      // Tipo (coluna 3)
+      const tipoX = margin + (COLUNA_LARGURA * 2);
+      const tipoLabel = 'Tipo';
       doc.setFont('helvetica', 'bold');
-      doc.text('Status:', margin + contentWidth / 2, yPosition);
+      doc.text(tipoLabel + ':', tipoX, yPosition);
+      
       doc.setFont('helvetica', 'normal');
-      doc.text(safeText(feedback.status), margin + contentWidth / 2 + 15, yPosition);
+      const tipoLines = doc.splitTextToSize(safeText(feedback.tipo), TEXTO_LARGURA);
+      doc.text(tipoLines, tipoX + FIELD_LABEL_WIDTH, yPosition);
+      maxLinhasLinha1 = Math.max(maxLinhasLinha1, tipoLines.length);
       
-      yPosition += 6;
+      // Ajustar yPosition baseado na linha com mais conteúdo
+      yPosition += (maxLinhasLinha1 * LINE_HEIGHT);
       
-      // Nota - Converter para número primeiro
+      // SEGUNDA LINHA: Endereço WMS, Status e Nota (TRÊS COLUNAS)
+      yPosition += 2;
+      
+      // Calcular largura para três colunas
+      const coluna2Largura = contentWidth / 3;
+      const texto2Largura = coluna2Largura - FIELD_LABEL_WIDTH;
+      
+      // Endereço WMS (coluna 1 - esquerda)
+      const enderecoLabel = 'Endereço WMS';
       doc.setFont('helvetica', 'bold');
-      doc.text('Nota:', margin, yPosition);
+      doc.text(enderecoLabel + ':', margin, yPosition);
+      
+      doc.setFont('helvetica', 'normal');
+      const enderecoLines = doc.splitTextToSize(safeText(feedback.endereco || feedback.enderecoWMS), texto2Largura);
+      doc.text(enderecoLines, margin + FIELD_LABEL_WIDTH, yPosition);
+      let maxLinhasLinha2 = enderecoLines.length;
+      
+      // Status (coluna 2 - centro)
+      const statusX = margin + coluna2Largura;
+      const statusLabel = 'Status';
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(229, 57, 53);
-      const nota = feedback.nota !== undefined ? Number(feedback.nota) : 0;
-      doc.text(`${nota}/10`, margin + 15, yPosition);
+      doc.text(statusLabel + ':', statusX, yPosition);
+      
+      const status = safeText(feedback.status);
+      doc.setFont('helvetica', 'normal');
+      
+      // Cor baseada no status
+      if (status.toLowerCase().includes('conclu')) {
+        doc.setTextColor(76, 175, 80);
+      } else if (status.toLowerCase().includes('pendente')) {
+        doc.setTextColor(255, 152, 0);
+      } else if (status.toLowerCase().includes('cancel')) {
+        doc.setTextColor(158, 158, 158);
+      }
+      
+      const statusLines = doc.splitTextToSize(status, texto2Largura);
+      doc.text(statusLines, statusX + FIELD_LABEL_WIDTH, yPosition);
+      maxLinhasLinha2 = Math.max(maxLinhasLinha2, statusLines.length);
       doc.setTextColor(33, 33, 33); // Resetar cor
       
-      yPosition += 6;
-      
-      // Descrição - USAR safeText() aqui
-      let descricao = feedback.mensagem || feedback.descricao || 'Sem descrição';
-      
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'italic');
-      doc.setTextColor(100, 100, 100);
-      
-      const descricaoLines = doc.splitTextToSize(safeText(descricao), contentWidth - 10);
-      doc.text(descricaoLines, margin + 5, yPosition);
-      
-      yPosition += descricaoLines.length * 4 + 10;
-      
-      // Linha separadora
-      doc.setDrawColor(224, 224, 224);
-      doc.setLineWidth(0.2);
-      doc.line(margin, yPosition - 5, pageWidth - margin, yPosition - 5);
-    }
-    
-    // Adicionar estatísticas se tiver espaço
-    if (yPosition < pageHeight - 40) {
-      yPosition += 10;
-      
-      // Linha divisória para estatísticas
-      doc.setDrawColor(229, 57, 53);
-      doc.setLineWidth(0.3);
-      doc.line(margin, yPosition, pageWidth - margin, yPosition);
-      yPosition += 10;
-      
-      // Estatísticas
-      doc.setFontSize(10);
+      // Nota (coluna 3 - direita)
+      const notaX = margin + (coluna2Largura * 2);
+      const notaLabel = 'Nota';
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(33, 33, 33);
-      doc.text('ESTATÍSTICAS', margin, yPosition);
+      doc.text(notaLabel + ':', notaX, yPosition);
       
-      yPosition += 7;
+      const nota = feedback.nota !== undefined ? Number(feedback.nota) : 0;
       
-      // Calcular estatísticas
-      const notas = feedbacksToExport.map(f => {
-        const nota = Number(f.nota);
-        return isNaN(nota) ? 0 : nota;
-      });
-      const media = notas.length > 0 ? notas.reduce((a, b) => a + b, 0) / notas.length : 0;
-      const maxNota = notas.length > 0 ? Math.max(...notas) : 0;
-      const minNota = notas.length > 0 ? Math.min(...notas) : 0;
+      // Cor baseada na nota
+      if (nota >= 8) {
+        doc.setTextColor(46, 125, 50); // Verde escuro
+      } else if (nota >= 7) {
+        doc.setTextColor(76, 175, 80); // Verde
+      } else if (nota >= 6) {
+        doc.setTextColor(255, 193, 7); // Amarelo
+      } else if (nota >= 5) {
+        doc.setTextColor(255, 152, 0); // Laranja
+      } else {
+        doc.setTextColor(229, 57, 53); // Vermelho
+      }
       
+      doc.setFont('helvetica', 'bold');
+      const notaText = `${nota.toFixed(1)}/10`;
+      const notaLines = doc.splitTextToSize(notaText, texto2Largura);
+      doc.text(notaLines, notaX + FIELD_LABEL_WIDTH, yPosition);
+      maxLinhasLinha2 = Math.max(maxLinhasLinha2, notaLines.length);
+      doc.setTextColor(33, 33, 33); // Resetar cor
+      
+      // Ajustar yPosition baseado na maior quantidade de linhas
+      yPosition += (maxLinhasLinha2 * LINE_HEIGHT);
+      
+      // TERCEIRA SEÇÃO: Descrição (SEM BORDAS)
+      yPosition += 4;
+      
+      let descricao = feedback.mensagem || feedback.descricao || feedback.observacao || 'Sem descrição fornecida.';
+      
+      // Título da descrição
       doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`• Média de notas: ${media.toFixed(1)}/10`, margin, yPosition);
-      doc.text(`• Nota mais alta: ${maxNota}/10`, margin + contentWidth / 2, yPosition);
-      yPosition += 5;
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(66, 66, 66);
+      doc.text('Descrição:', margin, yPosition);
       
-      doc.text(`• Nota mais baixa: ${minNota}/10`, margin, yPosition);
-      doc.text(`• Feedbacks exportados: ${feedbacksToExport.length}`, margin + contentWidth / 2, yPosition);
+      yPosition += 4;
+      
+      // Texto da descrição (sem caixa/bordas)
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(80, 80, 80);
+      
+      const descricaoLines = doc.splitTextToSize(safeText(descricao), contentWidth);
+      const descricaoHeight = descricaoLines.length * 3.2;
+      
+      // Verificar se precisa de nova página para a descrição
+      if (yPosition + descricaoHeight > pageHeight - 20) {
+        doc.addPage();
+        yPosition = margin;
+        addHeader(doc.internal.getNumberOfPages());
+        yPosition = margin + 25;
+        
+        // Ajustar yPosition baseado no tamanho do cabeçalho na nova página
+        if (usuarioInfoLines.length > 1) {
+          yPosition += 5;
+        }
+        
+        // Adicionar título da descrição na nova página
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(66, 66, 66);
+        doc.text('Descrição (continuação):', margin, yPosition);
+        yPosition += 4;
+        
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(80, 80, 80);
+      }
+      
+      // Desenhar o texto da descrição
+      doc.text(descricaoLines, margin, yPosition);
+      
+      yPosition += descricaoHeight + 10;
+      
+      // Linha separadora entre feedbacks
+      doc.setDrawColor(240, 240, 240);
+      doc.setLineWidth(0.1);
+      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      
+      // Espaço extra entre feedbacks
+      yPosition += 8;
     }
     
-    // Rodapé
+    // RODAPÉ EM TODAS AS PÁGINAS
     const totalPages = doc.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
+      
+      // Adicionar número de página
       doc.setFontSize(7);
       doc.setTextColor(150, 150, 150);
       doc.text(
-        `Página ${i} de ${totalPages}`,
+        `Página ${i} de ${totalPages} • Gerado em ${new Date().toLocaleString('pt-BR')}`,
         pageWidth / 2,
-        pageHeight - 10,
+        pageHeight - 7,
         { align: 'center' }
       );
+      
+      // Linha do rodapé
+      doc.setDrawColor(229, 57, 53);
+      doc.setLineWidth(0.2);
+      doc.line(margin, pageHeight - 10, pageWidth - margin, pageHeight - 10);
     }
     
     loadingSwal.close();
@@ -1896,31 +2164,39 @@ async function exportarFeedbacksPDF() {
     let fileName;
     
     // Limpar nome do usuário para nome de arquivo seguro
-    const safeUserName = safeText(usuarioLogado?.nome || 'usuario')
+    const safeUserName = usuarioEmail && usuarioEmail !== 'N/A' && usuarioEmail !== '-' 
+      ? usuarioEmail.split('@')[0] // Usar parte antes do @ do email
+      : usuarioNome;
+    
+    const safeFileName = safeText(safeUserName)
       .replace(/\s+/g, '_')
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^\w\s]/gi, '');
+      .replace(/[^\w\s]/gi, '')
+      .substring(0, 20);
     
     if (exportType === 'current') {
-      fileName = `feedbacks_pagina_${currentPage}_${safeUserName}_${dateStr}_${timeStr}.pdf`;
+      fileName = `feedbacks_p${currentPage}_${safeFileName}_${dateStr}_${timeStr}.pdf`;
     } else {
-      fileName = `feedbacks_todos_${safeUserName}_${dateStr}_${timeStr}.pdf`;
+      fileName = `feedbacks_completo_${safeFileName}_${dateStr}_${timeStr}.pdf`;
     }
     
+    // Salvar PDF
     doc.save(fileName);
     
+    // Mostrar confirmação
     Swal.fire({
       icon: 'success',
       title: 'PDF Gerado!',
       html: `<div style="text-align: left; padding: 10px;">
-              <p><strong>Arquivo:</strong> ${fileName}</p>
+              <p><strong>Arquivo:</strong> <code>${fileName}</code></p>
               <p><strong>Feedbacks exportados:</strong> ${feedbacksToExport.length}</p>
-              <p><strong>Tipo de exportação:</strong> ${exportType === 'current' ? 'Página atual' : 'Todos os feedbacks'}</p>
-              ${exportType === 'current' ? `<p><strong>Página:</strong> ${currentPage}</p>` : ''}
-              <p style="font-size: 12px; color: #666; margin-top: 10px;">
-                <i class="fas fa-info-circle"></i> O arquivo foi baixado automaticamente.
-              </p>
+              <p><strong>Tipo:</strong> ${exportType === 'current' ? `Página ${currentPage}` : 'Todos os feedbacks'}</p>
+              <p><strong>Páginas geradas:</strong> ${totalPages}</p>
+              <p><strong>Usuário:</strong> ${usuarioNome} ${usuarioEmail ? `(${usuarioEmail})` : ''}</p>
+              <div style="font-size: 12px; color: #666; margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; border-left: 4px solid #4caf50;">
+                <i class="fas fa-check-circle"></i> PDF gerado com sucesso! O arquivo foi baixado automaticamente.
+              </div>
             </div>`,
       confirmButtonColor: '#4caf50',
       width: '500px'
@@ -1928,24 +2204,22 @@ async function exportarFeedbacksPDF() {
     
   } catch (error) {
     console.error('Erro ao gerar PDF:', error);
-    console.error('Stack trace:', error.stack);
     loadingSwal.close();
     
     Swal.fire({
       icon: 'error',
       title: 'Erro ao Gerar PDF',
       html: `<div style="text-align: left; padding: 10px;">
-              <p>Ocorreu um erro ao gerar o arquivo PDF.</p>
-              <p><strong>Detalhes:</strong> ${error.message}</p>
-              <p><strong>Solução:</strong> Verifique se todos os campos dos feedbacks contêm dados válidos.</p>
-              ${error.message.includes('200') ? 
-                `<p style="color: #d32f2f; font-size: 12px; background: #ffebee; padding: 8px; border-radius: 4px;">
-                  <strong>Erro específico:</strong> O valor "200" foi encontrado em algum campo numérico.<br>
-                  Certifique-se de que todos os valores numéricos são tratados corretamente.
-                </p>` : ''}
+              <p>Ocorreu um erro ao gerar o arquivo PDF:</p>
+              <div style="background: #ffebee; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                <strong>${error.message}</strong>
+              </div>
+              <p style="font-size: 12px; color: #666;">
+                <i class="fas fa-lightbulb"></i> <strong>Sugestão:</strong> Verifique os dados dos feedbacks e tente novamente.
+              </p>
             </div>`,
       confirmButtonColor: '#e53935',
-      width: '550px'
+      width: '500px'
     });
   }
 }
