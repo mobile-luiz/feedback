@@ -1681,17 +1681,17 @@ function getCorPorProcesso(processo) {
 
 function getCorPorTipo(tipo) {
   const cores = {
-    'Qualidade Putaway': '#9c27b0',
-    'Sugestão de Melhoria': '#009688',
-    'Limite de SKU\'s': '#2196f3',
-    'Sobra': '#ff9800',
-    'Falta': '#f44336',
-    'Embalagens': '#795548',
-    'OB Verdadeiro - PNE': '#4caf50',
-    'OB Verdadeiro - PE': '#4caf50',
-    'OB Falso': '#757575'
+    'Qualidade Putaway': '#9c27b0',      // Roxo Vibrante
+    'Sugestão de Melhoria': '#00bcd4',    // Ciano (Diferente do Verde e Azul)
+    'Limite de SKU\'s': '#2196f3',       // Azul Royal
+    'Sobra': '#ffeb3b',                  // Amarelo Vivo
+    'Falta': '#f44336',                  // Vermelho
+    'Embalagens': '#795548',             // Marrom
+    'OB Verdadeiro - PNE': '#4caf50',    // Verde Folha
+    'OB Verdadeiro - PE': 'hsl(26, 62%, 34%)',     // Rosa Choque (Diferença total dos Verdes)
+    'OB Falso': '#607d8b'                // Cinza Azulado
   };
-  return cores[tipo] || '#757575';
+  return cores[tipo] || null;
 }
 
 function getCorPorNotaCSS(nota) {
