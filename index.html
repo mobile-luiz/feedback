@@ -171,6 +171,20 @@
                   <option value="">Carregando lista de colaboradores...</option>
                 </select>
               </div>
+
+
+
+              <!-- CAMPO PROCESSO -->
+<div class="input-group">
+  <label for="processo">Processo</label>
+  <select id="processo" required onchange="filtrarTiposPorProcesso()">
+    <option value="">Selecione o processo...</option>
+    <option value="Putaway">📦 Putaway</option>
+    <option value="Rack Transfer">🔄 Rack Transfer</option>
+    <option value="Checking">🔍 Checking</option>
+    <option value="OB Picking">📋 OB Picking</option>
+  </select>
+</div>
               
               <!-- CAMPO TIPO DE FEEDBACK -->
               <div class="input-group">
@@ -329,6 +343,7 @@
                   <th>DATA/HORA</th>
                   <th>CAD</th>
                   <th>COLABORADOR</th>
+                  <th>PROCESSO</th>
                   <th>TIPO</th>
                   <th>NOTA</th>
                   <th>ENDEREÇO WMS</th>
@@ -471,6 +486,12 @@
           <label>COLABORADOR</label>
           <div class="data-value" id="confirmColaborador"></div>
         </div>
+
+        <!-- No modal de confirmação, adicione este item após o colaborador -->
+<div class="data-item">
+  <label>PROCESSO</label>
+  <div class="data-value" id="confirmProcesso"></div>
+</div>
         
         <div class="data-item">
           <label>TIPO DE FEEDBACK</label>
@@ -565,3 +586,4 @@
 
 </body>
 </html>
+
